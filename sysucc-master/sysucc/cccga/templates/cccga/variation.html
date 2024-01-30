@@ -1,0 +1,684 @@
+{% extends "cccga/base_variation.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block varall_active %}active{% endblock %}
+{% block content-detail %}
+      <div class="panel panel-info">
+          <div class="panel-body">
+            <div id='variants-overview' style="width: 100%; height: 600px"></div>
+            {% autoescape off %}
+            <script>
+              var myChart = echarts.init(document.getElementById('variants-overview'));
+              var option = {
+                grid: [
+                  {right: '50%', bottom: '55%', left: '15%'},
+                  {left: '60%', bottom: '55%', right: '5%'},
+                  {right: '50%', top: '55%', left: '15%'},
+                  {left: '60%', top: '55%', right: '5%'}
+                ],
+                title: {
+                  text: '{% trans "Variants Overview" %}',
+                  //text: '群体变异概览',
+                  left: 'center'
+                },
+                tooltip: {
+                  //trigger: 'axis',
+                  //formatter: '{a}<br />{b}: {c}'
+                  formatter: '{b}<br />{a}: {c}%'
+                },
+                xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    name: 'Variation Classification',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'value',
+                    name: 'Variant Type',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'value',
+                    name: 'SNV Class',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 3,
+                    type: 'value',
+                    name: 'Top 10 Mutated Genes',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30,
+                    min: 0,
+                    max: {{ infos.top10genes.max }}
+                  }
+                ],
+                yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.varclass_all.name }}
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.vartype_all.name }}
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow',
+                    },
+                    data: {{ infos.snvclass_all.name }}
+                  },
+                  {
+                    gridIndex: 3,
+                    type: 'category',
+                    inverse: true,
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.top10genes.name }}
+                  }
+                ],
+                series: [
+                {
+                  name: 'Variation Classification',
+                  type: 'bar',
+                  data: {{ infos.varclass_all.value }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['peru', 'pink', 'blue', 'purple', 'orange', 'red', 'green'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}'
+                  }
+                },
+                {
+                  name: 'Variant Type',
+                  type: 'bar',
+                  data: {{ infos.vartype_all.value }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['SkyBlue', 'Gold', 'Thistle'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 1,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}'
+                  }
+                },
+                {
+                  name: 'SNV Class',
+                  type: 'bar',
+                  data: {{ infos.snvclass_all.rate }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}%'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['RoyalBlue', 'SlateGray', 'SaddleBrown', 'ForestGreen', 'GoldenRod', 'VioletRed'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 2,
+                  yAxisIndex: 2,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}%'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Missense_Mutation',
+                  data: {{ infos.top10genes.missense }},
+                  itemStyle: {
+                    color: 'green'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Nonsense_Mutation',
+                  data: {{ infos.top10genes.nonsense }},
+                  itemStyle: {
+                    color: 'red'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Splice_Region',
+                  data: {{ infos.top10genes.splice }},
+                  itemStyle: {
+                    color: 'orange'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Frame_Shift_Ins',
+                  data: {{ infos.top10genes.fsi }},
+                  itemStyle: {
+                    color: 'purple'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Frame_Shift_Del',
+                  data: {{ infos.top10genes.fsd }},
+                  itemStyle: {
+                    color: 'blue'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'In_Frame_Ins',
+                  data: {{ infos.top10genes.ifi }},
+                  itemStyle: {
+                    color: 'pink'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'In_Frame_Del',
+                  data: {{ infos.top10genes.ifd }},
+                  itemStyle: {
+                    color: 'peru'
+                  }
+                }
+                ]
+              };
+              myChart.setOption(option);
+            </script>
+            {% endautoescape %}
+            <hr />
+            <div id='variants-per-sample' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+            function drawVariantsPerSample(data) {
+              var myChart = echarts.init(document.getElementById('variants-per-sample'));
+              var datas = [data.missense, data.nonsense, data.splice, data.fsi, data.fsd, data.ifi, data.ifd];
+              var fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru'];
+              var texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del'];
+              var series = [];
+              for (let i = 0; i < datas.length; i++) {
+                var sery = {
+                  type: 'bar',
+                  stack: 'vps',
+                  name: texts[i],
+                  data: datas[i],
+                  itemStyle: {
+                    color: fills[i]
+                  }
+                };
+                series.push(sery);
+              }
+              var option = {
+                title: {
+                  text: 'Variants Per Sample',
+                  //text: '群体单样本变异类型图谱',
+                  left: 'center'
+                },
+                tooltip: {
+                  /*
+                  trigger: 'axis',*/
+                  axisPointer: {
+                    type: 'shadow',
+                  },
+                  formatter: '{b}<br />{a}: {c}'
+                },
+                xAxis: [
+                {
+                  type: 'category',
+                  axisTick: {
+                    show: false
+                  },
+                  axisLabel: {
+                    show: false
+                  },
+                  data: data.tsampleid
+                }
+                ],
+                yAxis: [
+                {
+                  type: 'value',
+                  min: 0,
+                  max: data.max,
+                }
+                ],
+                dataZoom: [
+                  {
+                    start: 0,
+                    end: 10,
+                    //type: 'inside',
+                    type: 'slider',
+                    xAxisIndex: [0],
+                    showDetail: false
+                  }
+                ],
+                series: series
+              };
+              myChart.setOption(option);
+            }
+            $(document).ready(function(){
+              var data = {{ infos.varclass_per_sample }};
+              drawVariantsPerSample(data);
+            })
+            </script>
+            {% endautoescape %}
+            <hr />
+            <div id='snvclass-per-sample' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+            function drawSnvclassBar(data) {
+              var myChart = echarts.init(document.getElementById('snvclass-per-sample'));
+              var datas = [data.t2g, data.t2a, data.t2c, data.c2t, data.c2g, data.c2a];
+              var names = ['T>G', 'T>A', 'T>C', 'C>T', 'C>G', 'C>A'];
+              var colors = ['VioletRed', 'GoldenRod', 'ForestGreen', 'SaddleBrown', 'SlateGray', 'RoyalBlue'];
+              var series = [];
+              for (let i = 0; i < datas.length; i++) {
+                var sery = {
+                  type: 'bar',
+                  stack: 'sps',
+                  name: names[i],
+                  data: datas[i],
+                  itemStyle: {
+                    color: colors[i]
+                  }
+                };
+                series.push(sery);
+              }
+              var option = {
+                title: {
+                  text: 'SNV Class Per Sample',
+                  //text: '群体突变频谱',
+                  left: 'center'
+                },
+                tooltip: {
+                  formatter: '{b}<br />{a}: {c}'
+                },
+                xAxis: [
+                {
+                  type: 'category',
+                  axisTick: {
+                    show: false
+                  },
+                  axisLabel: {
+                    show: false
+                  },
+                  data: data.tsampleid
+                }
+                ],
+                yAxis: [
+                {
+                  type: 'value',
+                  min: 0,
+                  max: data.max,
+                  interval: 0.1
+                }
+                ],
+                dataZoom: [
+                  {
+                    start: 0,
+                    end: 10,
+                    //type: 'inside',
+                    type: 'slider',
+                    xAxisIndex: [0],
+                    showDetail: false
+                  }
+                ],
+                series: series
+              };
+              myChart.setOption(option);
+            }
+            $(document).ready(function(){
+              var data = {{ infos.snvclass_per_sample }};
+              drawSnvclassBar(data);
+            });
+            </script>
+            {% endautoescape %}
+              <!-- alter-in-samples landscape start -->
+              <hr />
+              <div id="alter-in-samples" style="width: 100%; height:750px;"></div>
+              {% autoescape off %}
+              <script>
+              function draw(infos) {
+                var myChart = echarts.init(document.getElementById('alter-in-samples'));
+                var lol_width = 690;
+                var lol_height = 480;
+                var padding = {top: 150, right: 10, bottom: 10, left: 50};
+                var graphic = [];
+                var total_samples = 1015;
+                var gsv = infos.gsv;
+                var samples_num = gsv[0].length;
+                var samples_num_rate = (samples_num / total_samples * 100).toFixed(2);
+                var topgenes = infos.name;
+                var genes_num = topgenes.length;
+                var topgenes_rate = infos.sample_number;
+                var topgenes_rate_p = [];
+                for (i = 0; i < topgenes_rate.length; i++) {
+                  topgenes_rate_p[i] = Math.round(topgenes_rate[i]) + '%'
+                }
+                var topgene_max = infos.max;
+                var gsvfills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru', 'black', '#DCDCDC'];
+                var xoffset = (lol_width - padding.left) / samples_num;
+                var yoffset = lol_height / genes_num;
+                for (let i = 0; i < genes_num; i++) {
+                  for (let j = 0; j < samples_num; j++) {
+                    var colInx = gsv[i][j];
+                    if (colInx === -1) {
+                      colInx = 8;
+                    }
+                    let varclass_graphic = {
+                      id: 'x' + i + 'y' + j + '-rect',
+                      type: 'rect',
+                      scale: [1, 1],
+                      shape: {
+                        x: j * xoffset + padding.left,
+                        y: i * yoffset + i + padding.top,
+                        width: xoffset,
+                        height: yoffset
+                      },
+                      style: {
+                        fill: gsvfills[colInx],
+                        stroke: '#999',
+                        lineWidth: '0.1px'
+                      },
+                      //onmouseover: function () {},
+                      //onmouseout: function () {},
+                      silent: true
+                    };
+                    graphic.push(varclass_graphic);
+                  }
+                  //gene name
+                  let gene_text = {
+                    id: 'gene' + i + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: lol_width,
+                      y: i * yoffset + i + padding.top + 4,
+                      fill: 'black',
+                      text: topgenes[i],
+                      font: '10px',
+                    },
+                    silent: true
+                  };
+                  graphic.push(gene_text);
+                  //sample rate
+                  let sample_rate_text = {
+                    id: 'sample-rate' + i + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: 20,
+                      y: i * yoffset + i + padding.top + 4,
+                      fill: 'black',
+                      text: topgenes_rate_p[i],
+                      font: '10px',
+                    },
+                    silent: true
+                  };
+                  graphic.push(sample_rate_text);
+                }
+                //legend
+                var graphic_legend_ids = ['missense', 'nonsense', 'splice', 'fsi', 'fsd', 'ifi', 'ifd', 'mh'];
+                var graphic_legend_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru', 'black'];
+                var graphic_legend_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del', 'Multi Hit'];
+                for (let i = 0; i < graphic_legend_ids.length; i++) {
+                  let legend_circle = {
+                    id: graphic_legend_ids[i] + '-circle',
+                    type: 'circle',
+                    scale: [1, 1],
+                    shape: {
+                      cx: padding.left + 10 + (i - (i % 2)) * 75,
+                      cy: padding.top + genes_num + lol_height + 10 + (i % 2) * 20,
+                      r: 3,
+                      r0: 0
+                    },
+                    style: {
+                      fill: graphic_legend_fills[i],
+                      stroke: '#999',
+                    },
+                    silent: true
+                  };
+                  let legend_text = {
+                    id: graphic_legend_ids[i] + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: padding.left + 10 + (i - (i % 2)) * 75 + 10,
+                      y: padding.top + genes_num + lol_height + 10 + (i % 2) * 20,
+                      fill: 'black',
+                      text: graphic_legend_texts[i],
+                    },
+                    silent: true
+                  };
+                  graphic.push(legend_circle, legend_text);
+                }
+                //console.log(graphic);
+                var series = [];
+                var tg_datas = [
+                  infos.missense,
+                  infos.nonsense,
+                  infos.splice,
+                  infos.fsi,
+                  infos.fsd,
+                  infos.ifi,
+                  infos.ifd
+                ];
+                var tg_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru'];
+                var tg_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del'];
+                for (let i = 0; i < tg_datas.length; i++) {
+                  var sery = {
+                    type: 'bar',
+                    stack: 'tgs',
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    tooltip: {
+                      position: 'top',
+                      formatter: '{a}<br />{b}: {c}%'
+                    },
+                    name: tg_texts[i],
+                    data: tg_datas[i],
+                    itemStyle: {
+                      color: tg_fills[i]
+                    },
+                    barCategoryGap: '1px',
+                    barWidth: 15
+                  };
+                  series.push(sery);
+                }
+                //
+                var gsvbar_datas = [
+                  infos.gsvbar.missense,
+                  infos.gsvbar.nonsense,
+                  infos.gsvbar.splice,
+                  infos.gsvbar.fsi,
+                  infos.gsvbar.fsd,
+                  infos.gsvbar.ifi,
+                  infos.gsvbar.ifd
+                ];
+                var gsvbar_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru'];
+                var gsvbar_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del'];
+                for (let i = 0; i < gsvbar_datas.length; i++) {
+                  var sery = {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    tooltip: {
+                      position: 'top',
+                      formatter: '{a}<br />{b}: {c}'
+                    },
+                    name: gsvbar_texts[i],
+                    data: gsvbar_datas[i],
+                    itemStyle: {
+                      color: gsvbar_fills[i]
+                    }
+                  };
+                  series.push(sery);
+                }
+                //
+                var option = {
+                  graphic: graphic,
+                  grid: [
+                    {bottom: 750 - padding.top - lol_height - genes_num, left: 805, top: padding.top},
+                    {left: padding.left, bottom: 750 - padding.top + 5, right: 125}
+                  ],
+                  title: {
+                    text: 'Altered in ' + samples_num + '(' + samples_num_rate + '%) of ' + total_samples + ' samples',
+                    left: 'center'
+                  },
+                  tooltip: {},
+                  xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    position: 'top',
+                    min: 0,
+                    max: Math.round(topgene_max),
+                    interval: Math.round(topgene_max),
+                    axisTick: {
+                      show: true
+                    },
+                    splitLine: {
+                      show: false
+                    }
+                  },
+                  {
+                    gridIndex: 1,
+                    show: false,
+                    type: 'category',
+                    axisTick: {
+                      show: false
+                    },
+                    axisLabel: {
+                      show: false
+                    },
+                    data: infos.gsvbar.tsampleid
+                  }
+                  ],
+                  yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    data: topgenes,
+                    inverse: true,
+                    axisTick: {
+                      show: true
+                    },
+                    axisLabel: {
+                      show: false
+                    },
+                    splitLine: {
+                      show: false
+                    }
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'value',
+                    min: 0,
+                    max: infos.gsvbar.max,
+                    interval: infos.gsvbar.max,
+                    splitLine: {
+                      show: false
+                    }
+                  }
+                  ],
+                  series: series
+                };
+                myChart.setOption(option);
+              }
+              //run
+              $(document).ready(function(){
+                var infos = {{ infos.oncoplot.topgenes }};
+                draw(infos);
+              });
+              </script>
+              {% endautoescape %}
+              <!-- alter-in-samples landscape end -->
+          </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrastyle %}
+<!-- 引入 ECharts 文件 -->
+<!-- <script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script> -->
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/d3.v3.min.js' %}" charset="utf-8"></script>
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-3">
+      {% block content-sidebar %}
+    	<div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;{% trans "Variation Viewer" %}</h3>
+        </div>
+          <a href="{% url 'cccga:variation' %}" class="list-group-item {% block varall_active %}{% endblock %}"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;{% trans "Overview" %}</strong></a>
+          <a href="{% url 'cccga:category' %}" class="list-group-item {% block varcategory_active %}{% endblock %}"><strong>&nbsp;<span class="glyphicon glyphicon-paperclip"></span> &nbsp;{% trans "Cohort Study" %}</strong></a>
+          <!--
+          <a href="{% url 'cccga:query_sample' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Samples</strong></a> -->
+          <a href="{% url 'cccga:querygene' %}" class="list-group-item {% block varquery_active %}{% endblock %}"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;{% trans "Search Gene" %}</strong></a>
+      </div>
+      <div style="height: 600px"></div>
+      {% endblock %}
+    </div>
+    <div class="col-xs-9">
+      {% block content-detail %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

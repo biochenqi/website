@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block extrastyle %}
+<script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-3">
+      {% block content_sidebar %}
+    	<div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;{% trans %}Variation Viewer{% endtrans %}</h3>
+        </div>
+          <a  class="list-group-item {% block varall_active %}{% endblock %}"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;{% trans %}Overview{% endtrans %}</strong></a>
+          <a  class="list-group-item {% block varcategory_active %}{% endblock %}"><strong>&nbsp;<span class="glyphicon glyphicon-paperclip"></span> &nbsp;{% trans %}Cohort Study{% endtrans %}</strong></a>
+      </div>
+      <div style="height: 600px"></div>
+      {% endblock %}
+    </div>
+    <div class="col-xs-9">
+      {% block content_detail %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

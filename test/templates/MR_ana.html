@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+    .control-label {
+        font-size: 12px;
+    }
+    .selected {
+        background-color: #DFF0D8;
+    }
+    #topPlugin {
+        float: left;
+        margin-left: 0%;
+    }
+    div.dataTables_paginate {
+        margin: 0;
+        white-space: nowrap;
+        text-align: right;
+        margin-top: 5px;
+    }
+    .table th, .table td { 
+        text-align: center; 
+        height:25px;
+    }
+    .table > tbody > tr > td {
+        text-align:  center;
+    }
+    .table > thead:first-child > tr:first-child > th {
+        text-align: center;
+    }
+    div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+    .wrapper{
+        background: #FFF8DC;
+    }
+    .top{
+        background: #E6E6FA;
+    }
+    .bottom{
+        background: #ADD8E6;
+    }
+    .clear{
+        background: green;
+    }
+    /* 设置Button之间的距离 */
+    .button-spacing {
+    margin-right: 10px;  
+    }
+    .row + .row {
+        margin-top: 20px; /* 这会在每个跟在另一个.row元素后面的.row元素的顶部添加20px的边距 */
+    }
+    thead,tbody {
+    white-space: nowrap;
+    min-width: 150px;
+    }
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#cnv').DataTable({
+            "columnDefs": [
+            {
+                    "targets": [0], // 指定的列
+                    "orderable" : false // 禁用排序
+                }
+        ],
+        	"scrollY": 500,
+            "scrollX": true,
+            searching: false,
+            "ordering": false,
+            "aLengthMenu" : [10, 20, 50, 100], //更改显示记录数选项
+            "iDisplayLength" : 20 //默认显示的记录数
+            
+        });
+    } );
+</script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+{% endblock %}
+
+{% block  MR_ana %}active{% endblock %}
+{% block content %}
+<div class="container">
+    {# table content #}
+    <br>
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <!-- 多条件搜索 start -->
+                <div class="form-horizontal" id="filter-container">
+                  <div class="form-group">
+                    <form method="POST">
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <label class="col-sm-2 control-label">{% trans %}MR analysis results:{% endtrans %}</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" style="width: 100%" name="mr_ana_class" id="mr_ana_class">
+                                {% if mr_ana_fir=="Reverse" %}
+                                    <option value="Reverse">&nbsp;&nbsp;Reverse </option>
+                                    <option value="Forward">&nbsp;&nbsp;Forward </option>
+                                {% else %}
+                                    <option value="Forward">&nbsp;&nbsp;Forward </option>
+                                    <option value="Reverse">&nbsp;&nbsp;Reverse </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                      <label class="col-sm-2 control-label">{% trans %}Disease{% endtrans %}:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" name="Disease" id="Disease">
+                            <option value="{{ disease_fir }}">&nbsp;&nbsp;{{ disease_fir }}</option>
+                            <option value="">&nbsp;&nbsp;All</option>
+                            {% for disease in list_disease %}
+                            <option value="{{ disease }}">&nbsp;&nbsp;{{ disease }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <label class="col-sm-2 control-label">{% trans %}IDP{% endtrans %}:</label>
+                      <div class="col-sm-6">
+                        <input class="form-control" style="width: 100%" name="IDP" id="IDP" list="options" value="{{ idp_fir }}" autocomplete="off" >
+                        <datalist id="options">
+                            {% for idp in list_idp %}
+                            <option value="{{ idp }}"></option>
+                            {% endfor %}
+                        </datalist>
+                      </div>
+                        
+                      <div class="col-sm-3">
+                        <button id="search"  type="submit" name="action" value="search" class="btn btn-success button-spacing" >{% trans %}Search{% endtrans %}</button>
+                        <button id="reset"  type="submit" name="action" value="reset" class="btn btn-primary search" >{% trans %}Reset{% endtrans %}</button>
+                      </div>
+                    </div>
+                </form>
+                  </div>
+                </div>
+                <!-- 多条件搜索 end -->
+                <hr />
+                <!-- datatables start -->
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    {% for key in heads[:4] %}
+                                    <th rowspan="2" style="text-align: center; vertical-align: middle;">{{ key }}</th>
+                                    {% endfor %}
+                                    {% for key in heads[4:] %}
+                                    <th colspan="4" style="text-align:center">{{ key }}</th>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for key in heads_ana %}
+                                    <th>{{ key }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data %}
+                                <tr>
+                                    {% for value in row.values() %}
+                                        <td>{{ value }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+                <!-- datatables end -->
+              </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+
+<script>
+var x_list = [0,393];
+var assign_width = 700;
+var assign_height = 160;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+var svg = d3.select("#containerx")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+</script>
+{% endblock %}

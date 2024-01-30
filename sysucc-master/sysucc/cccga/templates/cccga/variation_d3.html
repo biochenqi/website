@@ -1,0 +1,111 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<script src="{% static 'js/d3.v3.min.js' %}" charset="utf-8"></script>
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-3">
+    	<div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search</h3>
+        </div>
+          <a href="{% url 'cccga:snv' %}" class="list-group-item">Somatic SNV</a>
+          <a href="{% url 'cccga:cnv' %}" class="list-group-item">Somatic CNV</a>
+      </div>
+    </div>
+    <div class="col-xs-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <font style="size:120%; font-weight:bold; color:black;">Variants per sample</font>
+        </div>
+          <div class="panel-body">
+            <div id='variation-overview-svgcontainer'></div>
+          </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <font style="size:120%; font-weight:bold; color:black;">Variant Classification</font>
+        </div>
+          <div class="panel-body">
+            <div id='variation-overview-svgcontainer1'></div>
+          </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <font style="size:120%; font-weight:bold; color:black;">Variant Type</font>
+        </div>
+          <div class="panel-body">
+            <div id='variation-overview-svgcontainer2'></div>
+          </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <font style="size:120%; font-weight:bold; color:black;">SNV class</font>
+        </div>
+          <div class="panel-body">
+            <div id='variation-overview-svgcontainer3'></div>
+          </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <font style="size:120%; font-weight:bold; color:black;">Distribution of Most Frequently Mutated Genes</font>
+        </div>
+          <div class="panel-body">
+            <div id='variation-overview-svgcontainer4'></div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var x_list = [0, 393];
+var assign_width = 850;
+var assign_height = 500;
+var padding = {top: 10, right: 60, bottom: 30, left: 60};
+var width = assign_width;
+var height = assign_height;
+var svg = d3.select("#variation-overview-svgcontainer")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+svg.append("rect")
+   .attr("fill", "white")
+   .attr("stroke-width", "1")
+   .attr("stroke", "#D3D3D3")
+   .attr("x", 1)
+   .attr("y", 1)
+   .attr("width", width - 28)
+   .attr("height", height - 2);
+var xAxisLength = width - padding.right - padding.left;
+var xScale = d3.scale.linear()
+               .domain([0, d3.max(x_list)])
+               .range([0, xAxisLength]);
+var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(10);
+svg.append("g")
+   .attr("class","axis")
+   .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
+   .call(xAxis)
+   .selectAll("text");
+var yAxisLength = height - padding.top - padding.bottom;
+var yScale = d3.scale.linear()
+               .domain([0, d3.max(x_list)])
+               .range([yAxisLength, 0]);
+var yAxis = d3.svg.axis()
+              .scale(yScale)
+              .orient("left")
+              .ticks(10);
+svg.append("g")
+   .attr("class","axis")
+   .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+   .call(yAxis)
+   .selectAll("text");
+</script>
+{% endblock %}

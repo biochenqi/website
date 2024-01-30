@@ -1,0 +1,385 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-07 09:29+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: cccga/templates/cccga/base.html:110
+msgid "Home"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:113 cccga/templates/cccga/workflow.html:61
+msgid "Analysis Workflow"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:116
+msgid "Sample Information"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:119
+msgid "Variation"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:122
+msgid "Download"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:147
+msgid "All Rights Reserved"
+msgstr ""
+
+#: cccga/templates/cccga/base.html:154
+msgid "Languages"
+msgstr ""
+
+#: cccga/templates/cccga/base_variation.html:20
+msgid "Variation Viewer"
+msgstr ""
+
+#: cccga/templates/cccga/base_variation.html:22
+msgid "Overview"
+msgstr ""
+
+#: cccga/templates/cccga/base_variation.html:23
+msgid "Cohort Study"
+msgstr ""
+
+#: cccga/templates/cccga/base_variation.html:26
+msgid "Search Gene"
+msgstr ""
+
+#: cccga/templates/cccga/category.html:9
+msgid "Colon Cancer Detailed Sites"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:23
+msgid "Genomic landscape of Chinese Colorectal Cancer"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:26
+msgid ""
+"Colorectal cancer is the most common malignant tumor in the gastrointestinal "
+"tract. At present, colorectal cancer ranks the third in the incidence of "
+"malignant tumors in China and shows an increasing trend in recent years. "
+"Genomic landscape of Chinese colorectal cancer is the largest cancer genome "
+"study in China at present. We collected 1015 samples with paired samples and "
+"500 cfDNA samples. The clinical information is relatively comprehensive, and "
+"the genomic characteristics of the Chinese population are displayed "
+"comprehensively, providing rich resources for deepening the understanding of "
+"Chinese colorectal cancer."
+msgstr ""
+
+#: cccga/templates/cccga/index.html:50
+msgid "Sex"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:92
+msgid "Age at Diagnosis"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:121
+msgid "age at diagnosis"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:121
+msgid "number of samples"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:160
+msgid "Overall Survival"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:233
+msgid "Sample Number in Different Pathological Stage"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:277
+msgid "Statistics"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:280
+msgid "Patients"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:281
+msgid "Samples"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:282
+msgid "mCRC Primary"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:283
+msgid "mCRC Metastasis"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:284
+msgid "Capture Probe"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:289
+msgid "Related Databases & Links"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:299
+msgid "How to Cite"
+msgstr ""
+
+#: cccga/templates/cccga/index.html:302
+msgid "Please cite the following required publications"
+msgstr ""
+
+#: cccga/templates/cccga/query_gene.html:14
+msgid "Go!"
+msgstr ""
+
+#: cccga/templates/cccga/query_gene.html:20
+msgid "Please enter the gene name, such as"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:456
+#: cccga/templates/cccga/sampleqc.html:540
+msgid "Sample Id"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:460
+#: cccga/templates/cccga/sampleqc.html:544
+msgid "Pathological Stage"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:474
+#: cccga/templates/cccga/sampleqc.html:545
+msgid "Primary Tumor Location"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:483
+#: cccga/templates/cccga/sampleqc.html:546
+msgid "Detailed Tumor Site"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:493
+msgid "Search"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:496
+msgid "Reset"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:541
+msgid "Clinic Information"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:542
+msgid "Tumor Seq"
+msgstr ""
+
+#: cccga/templates/cccga/sampleqc.html:543
+msgid "Normal Seq"
+msgstr ""
+
+#: cccga/templates/cccga/variation.html:21
+#: cccga/templates/cccga/variation_nographic.html:21
+msgid "Variants Overview"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:64
+#: cccga/templates/cccga/workflow.html:78
+msgid "Quality Check and Raw Data Conversion"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:65
+#: cccga/templates/cccga/workflow.html:94
+msgid "Alignment"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:66
+#: cccga/templates/cccga/workflow.html:102
+msgid "Mutation Calling"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:67
+#: cccga/templates/cccga/workflow.html:124
+msgid "Annotation and Filtering Strategies"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:68
+#: cccga/templates/cccga/workflow.html:137
+msgid "CNV Calling and GISTIC Analysis"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:69
+#: cccga/templates/cccga/workflow.html:147
+msgid "Signature Identification and Decomposition"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:80
+msgid "Raw Sequencing Data were preprocessed by"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:80
+msgid " for subsequent analysis:"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:81
+msgid "adapter trimming"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:82
+msgid "remove the reads in which the N base has reached a certain percentage"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:82
+msgid "default length of"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "remove the reads which contain low quality bases"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "default quality threshold value"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "above a certain portion"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "default"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "sliding window trimming: the bases in the sliding window"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "default is"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "with mean quality below cutting quality"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "will be cut"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:96
+msgid ""
+"The sequenced reads were aligned to the reference human genome (build hg19) "
+"using sentieon bwa-mem. Subsequent processing including sorting read and "
+"marking duplicates were performed using sentieon tools v201808 (https://www."
+"sentieon.com/ ), which were improved upon the GATK Toolkit (https://gatk."
+"broadinstitute.org/hc/en-us). Sequence depth and coverage were obtained "
+"using bamdst (https://github.com/shiquan/bamdst)."
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:104
+msgid ""
+"To identify all the variants, we used three somatic mutation callers for "
+"single nucleotide variants (SNVs) and indels"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:108
+msgid ""
+"To improve specificity, a panel of normal (PON) samples filtration was used "
+"to removed background germline variations and artifacts. Mutect2 and TNscope "
+"are based on bam files which processed by quality score recalibration that "
+"performed using GATK4 (v 4.1.1.0) (McKenna et al., 2010)."
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:109
+msgid "Specifically, processSomatic and somaticFilter"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:109
+msgid ""
+"were used to extract high-confidence somatic variants from the raw VarScan2 "
+"results and to remove clusters of false positives and SNVs near indels. "
+"Additional filtration with fpfilter.pl script from Varscan2 was performed "
+"tumor read counts generated by bam-readcount(https://github.com/genome/bam-"
+"readcount) was performed to reduce false positive calls. We discarded SNVs "
+"in RepeatMasker repeat regions(http://www.repeatmasker.org)."
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:126
+msgid ""
+"Somatic mutation calls were annotated using ANNOVAR(v2018-04-16)(Wang et "
+"al., 2010). To obtain reliable mutation calls, we used a two-step approach."
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:127
+msgid ""
+"First, chose mutations that were identified in at least two out of the three "
+"callers (Mutect2, TNscope and VarScan2)"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:128
+msgid "Second, additional filtering with three criteria was performed"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:129
+msgid "variant allele frequency"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:130
+msgid "sequencing depth in the region"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:131
+msgid "sequence reads in support of the variant call"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:139
+msgid ""
+"CNV analusis was done using EXCAVATOR2 v1.1.2(D'Aurizio, R et al., 2016). "
+"EXCAVATOR2 is a collection of bash, R and Fortran scripts and codes that "
+"analyses WES data to identify CNVs. It extends the Read Count approach to "
+"the whole genome sequence and exploits the Shifting Level Model (SLM) "
+"algorithm to segment the two combined profiles."
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:140
+msgid ""
+"To study significantly recurrent regions of SCNA, we applied GISTIC2 "
+"v2.0.23(Mermel et al., 2011) applied to the copy number segments. GISTIC2 "
+"was run with the following parameters"
+msgstr ""
+
+#: cccga/templates/cccga/workflow.html:149
+msgid ""
+"Mutational signatures were identified using Bioconductor package "
+"deconstructSigs(Rosenthal et al., 2016) from the CRC samples(only samples "
+"with at least 50 SNVs were included). The normalization method was set to "
+"'exome2genome'. This approach organized sample information in the form of "
+"the fraction of mutations in each of 96 trinucleotides and determined the "
+"weighted combination of the COSMIC signatures(https://cancer.sanger.ac.uk/"
+"cosmic/signatures)(Alexandrov, L. B et al,. 2013) that most closely "
+"reconstructed the mutational profile"
+msgstr ""
+
+#: cccga/views.py:29
+msgid "English"
+msgstr ""
+
+#: cccga/views.py:30
+msgid "Chinese"
+msgstr ""
+
+#: cccga/views.py:432 cccga/views.py:557
+#, python-format
+msgid "Amino Acid Changes for %(gene)s"
+msgstr ""

@@ -1,0 +1,378 @@
+{% extends "cccga/base_variation.html" %}
+{% load i18n %}
+
+{% block varquery_active %}active{% endblock %}
+{% block content-detail %}
+      {# search form #}
+      <div style="padding-left: 120px;padding-right: 120px;padding-top: 10px;">
+        <div id="query-container">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <input type="text" class="form-control" name="query_content" id="geneid">
+                  <span class="input-group-btn">
+                    <button class="btn btn-info" type="button" id="querygene">{% trans "Go!" %}</button>
+                  </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="text-left" style="margin-top: 5px; color: grey"><small>{% trans "Please enter the gene name, such as" %}: <span id="example"><a href="#">APC</a></span></small></p>
+      </div>
+      <hr id="query-separation" />
+<!-- start ajax -->
+{% autoescape off %}
+<script>
+function draw(aa) {
+  var myChart = echarts.init(document.getElementById('lollipop'));
+  var lol_width = 810;
+  var lol_height = 480;
+  var padding = {top: 0, right: 10, bottom: 10, left: 30};
+  var xAxisWidth = lol_width - padding.right - padding.left;
+  var gene_name = aa.gene;
+  var refseqid = aa.refseqid;
+  var proteinid = aa.proteinid;
+  var aa_length = aa.length;
+  var xscale = xAxisWidth / aa_length;
+  var domains = aa.domains;
+  var changes = aa.changes;
+  var max = aa.max;
+  if (max < 20) {
+    max = 20;
+  }
+  var yscale = 400 / max;
+  var rate = aa.rate;
+  rate = rate + '%';
+  var graphic = [
+    {
+      id: gene_name,
+      type: 'rect',
+      scale: [1, 1],  // width和height的放大倍数
+      shape: {
+        x: padding.left,
+        //x: 0,
+        y: lol_height - padding.bottom,
+        width: xAxisWidth,
+        height: 20
+      },
+      style: {
+        fill: '#C0C0C0',
+        stroke: '#999',
+      },
+      silent: true
+    }
+  ];
+  var graphic_legend_ids = ['missense', 'nonsense', 'splice', 'fsi', 'fsd', 'ifi', 'ifd', 'mh', 'other'];
+  var graphic_legend_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru', 'black', 'grey'];
+  var graphic_legend_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del', 'Multi Hit', 'Other'];
+  var graphic_legend_indexs = [];
+  for (let change in changes) {
+    let pos = changes[change][0];
+    let text = [change, changes[change][1]].join('/');
+    let id = change;
+    //let color = 'green';
+    let colorIndex = changes[change][2];
+    //
+    if (graphic_legend_indexs.indexOf(colorIndex) === -1) {
+      graphic_legend_indexs.push(colorIndex);
+    }
+    let color = graphic_legend_fills[colorIndex];
+    let af = changes[change][1] * yscale;
+    let change_graphic_line = {
+        id: id + '-line',
+        type: 'line',
+        scale: [1, 1],
+        shape: {
+          x1: padding.left + pos * xscale,
+          y1: lol_height - padding.bottom - af,
+          x2: padding.left + pos * xscale,
+          y2: lol_height - padding.bottom
+        },
+        style: {
+          fill: 'grey',
+          stroke: '#999',
+        },
+        silent: true
+    };
+    let change_graphic_circle = {
+        id: id + '-circle',
+        type: 'circle',
+        scale: [1, 1],
+        shape: {
+          cx: padding.left + pos * xscale,
+          cy: lol_height - padding.bottom - af,
+          r: 3,
+          r0: 0
+        },
+        style: {
+          fill: color,
+          stroke: '#999',
+        },
+        onmouseover: function () {
+          //alert(change);
+          var lollipop = document.getElementById('lollipop');
+          var tooltip = document.createElement('p');
+          tooltip.id = id;
+          tooltip.innerText = text;
+          //var top = lol_height - padding.bottom - 5 - af - 50;
+          var top = 490 - af;
+          var left = padding.left + (pos - 10) * xscale;
+          var style = 'color: red; font-size: 20px; position: absolute; left: ' + left + 'px; top: ' + top +'px';
+          tooltip.setAttribute('style', style);
+          lollipop.appendChild(tooltip);
+          //console.log(id, top, left);
+          /*
+          var d = document.createElement('style');
+          d.setAttribute('type', 'text/css');
+          d.innerHTML = '#aatooltip {color: red; top: 500px; left: 500px}';
+          document.getElementsByTagName('head')[0].appendChild(d);*/
+        },
+        onmouseout: function () {
+          var self = document.getElementById(id);
+          var parent = self.parentElement;
+          parent.removeChild(self);
+        }
+    };
+    graphic.push(change_graphic_line, change_graphic_circle);
+  }
+  //legend
+  var graphic_legend_indexs_sort = graphic_legend_indexs.sort();
+  for (let i = 0; i < graphic_legend_indexs_sort.length; i++) {
+    let graphic_legend_index = graphic_legend_indexs_sort[i];
+    let legend_circle = {
+      id: graphic_legend_ids[graphic_legend_index] + '-circle',
+      type: 'circle',
+      scale: [1, 1],
+      shape: {
+        cx: 690,
+        cy: 80 + 20 * i,
+        r: 3,
+        r0: 0
+      },
+      style: {
+        fill: graphic_legend_fills[graphic_legend_index],
+        stroke: '#999',
+      },
+      silent: true
+    };
+    let legend_text = {
+      id: graphic_legend_ids[graphic_legend_index] + '-text',
+      type: 'text',
+      scale: [1, 1],
+      style: {
+        x: 700,
+        y: 80 + 20 * i,
+        fill: 'black',
+        text: graphic_legend_texts[graphic_legend_index],
+      },
+      silent: true
+    };
+    graphic.push(legend_circle, legend_text);
+  }
+  var domain_colors = ['#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c', '#9287e7'];
+  var color_index = 0;
+  for (let i = 0; i < domains.length; i++) {
+    let domain = domains[i];
+    let start = domain[0];
+    let end = domain[1];
+    let label = domain[2] + ':' + start + '-' + end;
+    let id = 'domain' + '-' + i;
+    let color = domain_colors[color_index];
+    if (color_index > 4) {
+      color_index = 0;
+    } else {
+      color_index = color_index + 1
+    }
+    let domain_graphic = {
+      id: id,
+      type: 'rect',
+      scale: [1, 1],
+      shape: {
+        x: padding.left + start * xscale,
+        y: lol_height - padding.bottom - 5,
+        width: (end - start) * xscale,
+        height: 30
+      },
+      style: {
+        fill: color,
+        stroke: '#999',
+      },
+      onmouseover: function () {
+        //alert(change);
+        var lollipop = document.getElementById('lollipop');
+        var tooltip = document.createElement('p');
+        tooltip.id = id;
+        tooltip.innerText = label;
+        //var top = lol_height - padding.bottom - 35;
+        var top = 600;
+        var left = padding.left + (start + (end - start) / 2 - 10) * xscale;
+        var style = 'color: red; font-size: 20px; position: absolute; left: ' + left + 'px; top: ' + top +'px';
+        tooltip.setAttribute('style', style);
+        lollipop.appendChild(tooltip);
+        //console.log(id, label, top, left);
+        /*
+        var d = document.createElement('style');
+        d.setAttribute('type', 'text/css');
+        d.innerHTML = '#aatooltip {color: red; top: 500px; left: 500px}';
+        document.getElementsByTagName('head')[0].appendChild(d);*/
+      },
+      onmouseout: function () {
+        var self = document.getElementById(id);
+        var parent = self.parentElement;
+        parent.removeChild(self);
+      }
+    };
+    graphic.push(domain_graphic);
+  }
+  //console.log(graphic);
+  //
+  var option = {
+    graphic: graphic,
+    title: {
+      //text: [gene_name, refseqid, proteinid, rate].join(':'),
+      //text: gene_name + ': [Somatic Mutation Rate: ' + rate + ']\n' + refseqid,
+      text: gene_name,
+      textStyle: {
+        color: '#337ab7'
+      },
+      link: 'https://www.genecards.org/cgi-bin/carddisp.pl?gene=' + gene_name,
+      subtext: '[Somatic Mutation Rate: ' + rate + ']\n' + refseqid,
+      subtextStyle: {
+        color: 'black'
+      },
+      left: padding.left + 25,
+      top: 5
+    },
+    grid: [
+    {right: padding.right + 5, bottom: 300, left: padding.left},
+    {right: padding.right, bottom: 330, left: padding.left - 5}
+    ],
+    xAxis: [
+    {
+      gridIndex: 0,
+      type: 'value',
+      min: 0,
+      max: aa_length,
+      axisTick: {
+        show: true
+      },
+      splitLine: {
+        show: false
+      }
+    },
+    {
+      gridIndex: 1,
+      show: false
+    }
+    ],
+    yAxis: [
+    {
+      gridIndex: 0,
+      show: false
+    },
+    {
+      gridIndex: 1,
+      /*
+      name: 'sample number',
+      nameLocation: 'middle',
+      nameRotate: 90,
+      nameTextStyle: {
+        fontSize: 10,
+      },*/
+      type: 'value',
+      min: 0,
+      max: max,
+      splitLine: {
+        show: false
+      }
+    }
+    ],
+    series: [
+    {
+      type: 'scatter',
+      data: []
+    }
+    ]
+  };
+  myChart.setOption(option);
+}
+//
+  $(document).ready(function(){
+    $('#querygene').click(function(){
+      $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+      });
+      var $genename = $('#geneid').val();
+      //console.log($genename);
+      if ($genename === '') {
+        $('#query-container').next().css('color', 'red');
+        return false;
+      }
+      $('#query-container').next().css('color', 'grey');
+      $('#query-separation').next().remove();
+      //var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+      $.post("{% url 'cccga:querygene_ajax' %}",
+        //{genename: $genename, "csrfmiddlewaretoken": csrfToken},
+        {genename: $genename},
+        function(data, textStatus){
+          var errs = data.err_msgs;
+          //console.log(errs);
+          var aa = data.svgd;
+          //console.log(aa);
+          if (errs.length !== 0) {
+            var txtHtml = `
+            <div class="row">
+              <div class="col-xs-1"></div>
+              <div class="col-xs-10">
+                <div class="alert alert-warning alert-dismissable">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <h3 class="text-center">Warning</h3>`;
+            $.each(errs, function(commentIndex, comment) {
+              txtHtml += '<p class="text-center">' + comment + '</p>';
+            });
+            txtHtml += '</div></div></div>';
+            $('#query-separation').after(txtHtml);
+          } else {
+            //console.log('draw');
+            var txtHtml = `
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <font style="size:120%; font-weight:bold; color:black;">${aa.panelhead}</font>
+                  </div>
+                  <div class="panel-body">
+                    <div id="lollipop" style="width: 100%; height: 800px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+            $('#query-separation').after(txtHtml);
+            draw(aa);
+          }
+        }
+      );
+    });
+    //enter
+    /*
+    $(document).keyup(function (event) {
+      if (event.keyCode === 13) {
+        $('#querygene').trigger('click');
+      }
+    });*/
+    $('#geneid').keyup(function (event) {
+      if (event.which === 13) {
+        $('#querygene').click();
+      }
+    });
+    //example
+    $('#example a').click(function(e) {
+      e.preventDefault();
+      $('#geneid').val($(this).text());
+      $('#querygene').trigger('click');
+    });
+  });
+</script>
+{% endautoescape %}
+<!-- end ajax -->
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends "cccga/base_variation.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block varcategory_active %}active{% endblock %}
+{% block content-detail %}
+      <div class="panel panel-info">
+          <div class="panel-heading">
+            <font style="size:120%; font-weight:bold; color:black;">{% trans "Colon Cancer Detailed Sites" %}</font>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-6">
+                <!-- https://www.mayoclinic.org/diseases-conditions/colon-cancer/symptoms-causes/syc-20353669 -->
+                <img src="{% static 'cccga/colon_cancer_detail_sites_fix.png' %}" width="90%" height="90%">
+              </div>
+              <div class="col-xs-6">
+                <div id='detailed-sites-samples' style="width: 100%; height: 250px"></div>
+                {% autoescape off %}
+                <script>
+                  var myChart = echarts.init(document.getElementById('detailed-sites-samples'));
+                  var detailed_sites_data = [];
+                  var names = {{ infos.detailed_sites.sample_number.name }};
+                  var values = {{ infos.detailed_sites.sample_number.number }};
+                  for (let i = 0; i < names.length; i++) {
+                    var data = {
+                      name: names[i],
+                      value: values[i]
+                    };
+                    detailed_sites_data.push(data);
+                  }
+                  var known = eval(values.join('+'));
+                  var na = {
+                    name: 'NA',
+                    value: 1015 - known
+                  };
+                  detailed_sites_data.push(na);
+                  var option = {
+                    tooltip: {},
+                    title: [
+                    {
+                      text: 'detailed sites samples',
+                      top: '3%',
+                      left: '60%',
+                      textStyle: {
+                        fontSize: 12
+                      }
+                    }
+                    ],
+                    series: [
+                    {
+                      name: 'detailed sites samples',
+                      type: 'pie',
+                      //left: '50%',
+                      //top: '50%',
+                      color: ['#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c', '#9287e7'],
+                      label: {
+                        position: 'outside',
+                        formatter: '{b}: {c}',
+                        //fontWeight: 'bold',
+                        fontSize: 8,
+                        alignTo: 'labelLine'
+                      },
+                      data: detailed_sites_data
+                    }
+                    ]
+                  };
+                  myChart.setOption(option);
+                </script>
+                {% endautoescape %}
+              </div>
+            </div>
+            <div id='category-detailed-sites' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+              var myChart = echarts.init(document.getElementById('category-detailed-sites'));
+              var series = [];
+              //varclass
+              var varclass_datas = [
+                {{ infos.detailed_sites.varclass.missense }},
+                {{ infos.detailed_sites.varclass.nonsense }},
+                {{ infos.detailed_sites.varclass.splice }},
+                {{ infos.detailed_sites.varclass.fsi }},
+                {{ infos.detailed_sites.varclass.fsd }},
+                {{ infos.detailed_sites.varclass.ifi }},
+                {{ infos.detailed_sites.varclass.ifd }}
+              ];
+              var varclass_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru'];
+              var varclass_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del'];
+              for (let i =0; i < varclass_datas.length; i++) {
+                let bar = {
+                  type: 'bar',
+                  stack: 'idsv',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  name: varclass_texts[i],
+                  data: varclass_datas[i],
+                  itemStyle: {
+                    color: varclass_fills[i]
+                  }
+                };
+                series.push(bar);
+              }
+              //vartype
+              var vartype_datas = [
+                {{ infos.detailed_sites.vartype.snp }},
+                {{ infos.detailed_sites.vartype.ins }},
+                {{ infos.detailed_sites.vartype.del }}
+              ];
+              var vartype_fills = ['SkyBlue', 'Gold', 'Thistle'];
+              var vartype_texts = ['SNP', 'INS', 'DEL'];
+              for (let i =0; i < vartype_datas.length; i++) {
+                let bar = {
+                  type: 'bar',
+                  stack: 'idsvt',
+                  xAxisIndex: 1,
+                  yAxisIndex: 1,
+                  name: vartype_texts[i],
+                  data: vartype_datas[i],
+                  itemStyle: {
+                    color: vartype_fills[i]
+                  }
+                };
+                series.push(bar);
+              }
+              //snvclass
+              var snvclass_datas = [
+                {{ infos.detailed_sites.snvclass.c2a }},
+                {{ infos.detailed_sites.snvclass.c2g }},
+                {{ infos.detailed_sites.snvclass.c2t }},
+                {{ infos.detailed_sites.snvclass.t2c }},
+                {{ infos.detailed_sites.snvclass.t2a }},
+                {{ infos.detailed_sites.snvclass.t2g }}
+              ];
+              var snvclass_fills = ['RoyalBlue', 'SlateGray', 'SaddleBrown', 'ForestGreen', 'GoldenRod', 'VioletRed'];
+              var snvclass_texts = ['C>A', 'C>G', 'C>T', 'T>C', 'T>A', 'T>G'];
+              for (let i =0; i < snvclass_datas.length; i++) {
+                let bar = {
+                  type: 'bar',
+                  stack: 'idss',
+                  xAxisIndex: 2,
+                  yAxisIndex: 2,
+                  name: snvclass_texts[i],
+                  data: snvclass_datas[i],
+                  itemStyle: {
+                    color: snvclass_fills[i]
+                  }
+                };
+                series.push(bar);
+              }
+              //draw
+              var option = {
+                grid: [
+                  {right: '64%', left: '12%'},
+                  {left: '40%', right: '34%'},
+                  {left: '70%', right: '5%'},
+                ],
+                title: [
+                {
+                  text: 'Variation Classification',
+                  top: '4%',
+                  left: '8%'
+                },
+                {
+                  text: 'Variation Type',
+                  top: '4%',
+                  left: '42%'
+                },
+                {
+                  text: 'SNV Class',
+                  top: '4%',
+                  left: '75%'
+                }
+                ],
+                tooltip: {
+                  //trigger: 'axis',
+                  //formatter: '{a}<br />{b}: {c}'
+                  formatter: '{b}<br />{a}: {c}'
+                },
+                xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    max: 1
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'value',
+                    max: 1
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'value',
+                    max: 1
+                  }
+                ],
+                yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 13,
+                      //fontWeight: 'bold'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.detailed_sites.varclass.name }}
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'category',
+                    axisLabel: {
+                      show: false
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.detailed_sites.vartype.name }}
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'category',
+                    axisLabel: {
+                      show: false
+                    },
+                    axisPointer: {
+                      type: 'shadow',
+                    },
+                    data: {{ infos.detailed_sites.snvclass.name }}
+                  }
+                ],
+                series: series
+              };
+              myChart.setOption(option);
+            </script>
+            {% endautoescape %}
+          </div>
+        </div>
+        <!--
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <font style="size:120%; font-weight:bold; color:black;">SNV Class</font>
+          </div>
+          <div class="panel-body">
+            <div id='category-snvclass' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+              var myChart = echarts.init(document.getElementById('category-snvclass'));
+              var option = {};
+              myChart.setOption(option);
+            </script>
+            {% endautoescape %}
+          </div>
+      </div>-->
+{% endblock %}

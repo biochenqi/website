@@ -1,0 +1,310 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrastyle %}
+<!-- 引入 ECharts 文件 -->
+<!-- <script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script> -->
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<style type="text/css">
+  .panel-title {
+    font-weight: bold;
+  }
+</style>
+{% endblock %}
+
+{% block index_active %}active{% endblock %}
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-9">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <div class="panel-title">{% trans "Genomic landscape of Chinese Colorectal Cancer" %}</div>
+            </div>
+            <div class="panel-body">
+              <p style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "Colorectal cancer is the most common malignant tumor in the gastrointestinal tract. At present, colorectal cancer ranks the third in the incidence of malignant tumors in China and shows an increasing trend in recent years. Genomic landscape of Chinese colorectal cancer is the largest cancer genome study in China at present. We collected 1015 samples with paired samples and 500 cfDNA samples. The clinical information is relatively comprehensive, and the genomic characteristics of the Chinese population are displayed comprehensively, providing rich resources for deepening the understanding of Chinese colorectal cancer." %}</p>
+              <div class="row">
+                <div class="col-xs-6">
+                  <div id="clinic-sex" style="width: 100%; height:300px;"></div>
+                  {% autoescape off %}
+                  <script>
+                  function drawSexPie(data) {
+                    var myChart = echarts.init(document.getElementById('clinic-sex'));
+                    if (data.NA === '0') {
+                      var data = [
+                          {value: data.male, name: 'male'},
+                          {value: data.female, name: 'female'}
+                      ];
+                    } else {
+                      var data = [
+                          {value: data.male, name: 'male'},
+                          {value: data.female, name: 'female'},
+                          {value: data.NA, name: 'NA'}
+                      ];
+                    }
+                    var option = {
+                      tooltip: {},
+                      title: [
+                        {
+                          text: '{% trans "Sex" %}',
+                          //text: '性别分布情况',
+                          top: '92%',
+                          left: 'center',
+                          textStyle: {
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                          }
+                        }
+                      ],
+                      series: [
+                        {
+                          name: 'Sex',
+                          type: 'pie',
+                          stillShowZeroSum: false,
+                          label: {
+                            position: 'inside',
+                            formatter: '{b}: {c}'
+                          },
+                          data: data,
+                          color: ['#1E90FF', '#FFC0CB', '#C0C0C0']
+                        }
+                      ]
+                    };
+                    myChart.setOption(option);
+                  }
+                  $(document).ready(function(){
+                    var data = {{ infos.sex }};
+                    drawSexPie(data);
+                  });
+                  </script>
+                  {% endautoescape %}
+                </div>
+                <div class="col-xs-6">
+                  <div id="clinic-age" style="width: 100%; height:300px;"></div>
+                  {% autoescape off %}
+                  <script>
+                  function drawAgeBar(data) {
+                    var myChart = echarts.init(document.getElementById('clinic-age'));
+                    var option = {
+                      xAxis: [
+                        {
+                          name: '{% trans "Age at Diagnosis" %}',
+                          //name: '诊断年龄分布情况',
+                          nameLocation: 'center',
+                          nameTextStyle: {
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                          },
+                          nameGap: 35,
+                          splitNumber: 10,
+                          axisTick: {
+                            alignWithLabel: true,
+                            interval: 0,
+                          },
+                          axisLabel: {
+                            interval: 0,
+                            rotate: -30,
+                          },
+                          data: data.name
+                        }
+                      ],
+                      yAxis: [{}],
+                      tooltip: {},
+                      series: [
+                        {
+                          name: 'Age at Diagnosis',
+                          type: 'bar',
+                          data: data.value,
+                          color: ['#1E90FF'],
+                          tooltip: {
+                            formatter: '{% trans "age at diagnosis" %}: {b}<br />{% trans "number of samples" %}: {c}'
+                            //formatter: 'Age at Diagnosis: {b}<br />该年龄区间样本数: {c}'
+                          }
+                        }
+                      ]
+                    };
+                    myChart.setOption(option);
+                  }
+                  $(document).ready(function(){
+                    var data = {{ infos.age }};
+                    drawAgeBar(data);
+                  });
+                  </script>
+                  {% endautoescape %}
+                </div>
+              </div>
+              <div class="row">
+                <!--
+                <div class="col-xs-6">
+                    <img src="{% static 'cccga/os.png' %}" width="90%" height="90%">
+                    <p class="text-center" style="font-size: 15px;"><strong>总生存期变化</strong></p>
+                </div>-->
+                <div class="col-xs-6">
+                  <div id='clinic-os' style="width: 100%; height: 300px"></div>
+                  {% autoescape off %}
+                  <script>
+                  function drawOsLine(data) {
+                    var myChart = echarts.init(document.getElementById('clinic-os'));
+                    var time = data.time;
+                    var probability = data.probability;
+                    var xmax = data.xmax;
+                    var _data = [];
+                    for (let i = 0; i < time.length; i++) {
+                      let d = [time[i], probability[i]];
+                      _data.push(d);
+                    }
+                    var option = {
+                      title: {
+                          //text: '总生存期变化',
+                          text: '{% trans "Overall Survival" %}',
+                          top: '92%',
+                          left: 'center',
+                          textStyle: {
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                          }
+                      },
+                      tooltip: {
+                          trigger: 'axis',
+                          formatter: function(params) {
+                            //console.log(params);
+                            var p = (params[0].data[1] * 100).toFixed(2);
+                            var t = params[0].data[0];
+                            return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px">Overall Survival</div>'
+                                + 'Survival estimate: ' + p + '%<br />'
+                                + 'Time of death: ' + t + ' months';
+                          }
+                      },
+                      dataZoom: [
+                        {
+                          type: 'inside',
+                          //type: 'slider',
+                        }
+                      ],
+                      xAxis: {
+                          type: 'value',
+                          max: xmax + 10
+                      },
+                      yAxis: {
+                          type: 'value',
+                          max: 1.1
+                      },
+                      series: [
+                          {
+                              name: 'Overall Survival',
+                              type: 'line',
+                              step: 'end',
+                              color: ['#1E90FF'],
+                              data: _data
+                          }
+                      ]
+                    };
+                    myChart.setOption(option);
+                  }
+                  $(document).ready(function(){
+                    var data = {{ infos.os }};
+                    drawOsLine(data);
+                  });
+                  </script>
+                  {% endautoescape %}
+                </div>
+                <div class="col-xs-6">
+                  <div id='pathological-stage-samples' style="width: 100%; height: 300px"></div>
+                  {% autoescape off %}
+                  <script>
+                  function drawPathoBar(data) {
+                    var myChart = echarts.init(document.getElementById('pathological-stage-samples'));
+                    var patho_stage_data = [];
+                    var names = data.name;
+                    var values = data.value;
+                    for (let i = 0; i < names.length; i++) {
+                      let _data = {
+                        name: names[i],
+                        value: values[i]
+                      };
+                      patho_stage_data.push(_data);
+                    }
+                    var option = {
+                      tooltip: {},
+                      title: [
+                      {
+                        //text: '不同病理分期样本数',
+                        text: '{% trans "Sample Number in Different Pathological Stage" %}',
+                        top: '92%',
+                        //left: '20%',
+                        left: 'center',
+                        textStyle: {
+                          fontWeight: 'bold',
+                          fontSize: 15
+                        }
+                      }
+                      ],
+                      series: [
+                      {
+                        name: 'Sample Number in Different Pathological Stage',
+                        type: 'pie',
+                        //left: '50%',
+                        //top: '50%',
+                      color: ['#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c', '#9287e7'  ],
+                        label: {
+                          position: 'outside',
+                          formatter: '{b}: {c}',
+                          //fontWeight: 'bold',
+                          alignTo: 'labelLine'
+                        },
+                        data: patho_stage_data
+                      }
+                      ]
+                    };
+                    myChart.setOption(option);
+                  }
+                  $(document).ready(function(){
+                    var data = {{ infos.pathological_stage }};
+                    drawPathoBar(data);
+                  });
+                  </script>
+                  {% endautoescape %}
+                </div>
+              </div>
+              <br />
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <div class="panel-title"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;{% trans "Statistics" %}</div>
+            </div>
+            <div class="panel-body">
+              <p>{% trans "Patients" %}:&nbsp;<strong>{{ infos.patients_num }}</strong></p>
+              <p>{% trans "Samples" %}:&nbsp;<strong>{{ infos.tumor_sample_num }}</strong></p>
+              <p>{% trans "mCRC Primary" %}:&nbsp;<strong>{{ infos.mcrc_primary }}</strong></p>
+              <p>{% trans "mCRC Metastasis" %}:&nbsp;<strong>{{ infos.mcrc_metastasis }}</strong></p>
+              <p>{% trans "Capture Probe" %}:&nbsp;<strong>WES</strong></p>
+            </div>
+          </div>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <div class="panel-title"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span>&nbsp;&nbsp;{% trans "Related Databases & Links" %}</div>
+            </div>
+            <div class="panel-body">
+              <p><a href="https://www.cbioportal.org/" target="_blank"><strong>cBioPortal</strong></a></p>
+              <p><a href="https://portal.gdc.cancer.gov/" target="_blank"><strong>GDC</strong></a></p>
+              <p><a href="http://www.cpgea.com/" target="_blank"><strong>CPGEA</strong></a></p>
+              <p><a href="http://www.cgga.org.cn/" target="_blank"><strong>CGGA</strong></a></p>
+            </div>
+          </div>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <div class="panel-title"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;{% trans "How to Cite" %}</div>
+            </div>
+            <div class="panel-body">
+              <p>&nbsp;&nbsp;</p>
+              <!-- <p>&nbsp;&nbsp;{% trans "Please cite the following required publications" %}:</p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

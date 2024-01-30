@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+
+.panel-heading > font {
+    size:120%;
+    font-weight:bold;
+    color:black
+}
+.list-group-item-highlight {
+    cursor: pointer;
+    background-color: #E0E0E0
+}
+.list-group-item-highlight-click {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
+
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#cnv').DataTable({
+        	"scrollY": 500,
+            "scrollX": true,
+            searching: false,
+            "ordering": true,
+            "aLengthMenu" : [10, 20, 50, 100], //更改显示记录数选项
+            "iDisplayLength" : 20, //默认显示的记录数
+        });
+    } );
+</script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+<script>
+    // 固定位置
+    $(document).ready(function(){
+        $("#myNav").affix({
+            offset: { 
+                top: -100
+          }
+        });
+    });
+    // 手型+背景色
+    $(document).ready(function(){
+        $("ul.list-group>.list-group-item").bind("mouseover", function(){
+            $(this).addClass('list-group-item-highlight');
+        }).bind('mouseout', function(){
+            $(this).removeClass('list-group-item-highlight');
+        })
+    });
+    // 点击+显示特定内容
+    $(document).ready(function(){
+        $("ul.list-group>.list-group-item").bind("click", function(){
+            $(this).siblings().removeClass('list-group-item-highlight-click');
+            $(this).addClass('list-group-item-highlight-click');
+            var $header = $(this).text();
+            $('.content>.panel').hide();
+            $('.content .panel-heading')
+            .filter(":contains(" + $header + ")")
+            .closest('.panel').show();
+        })
+    })
+    </script>
+
+{% endblock %}
+
+{% block workflow_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    	<div class="col-xs-3">
+            <div class="tag">
+    		<div class="panel panel-info">
+                <div class="panel-heading">
+                  <!-- <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;Variation</h3>
+                 -->
+                 <font>&nbsp;{% trans %}Analysis Workflow {% endtrans %}</font>
+                </div>
+                <form method="GET">
+                <!-- <ul class="list-group"> -->
+                {% for key in classes %}
+                <!-- <a href="{{ url_for('test2', text=key) }}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;{{ key }}</strong></a> -->
+                <a href="{{ url_for('test2', text=key) }}" class="list-group-item"> {{ key }}</a>
+                <!-- <li class="list-group-item"><a href="{{ url_for('test2', text=key) }}" >{% trans %}{{ key }}{% endtrans %}</a></li> -->
+                {% endfor %}
+                <!-- </ul> -->
+            </form>
+            </div>
+        </div>
+        <div style="height: 600px"></div>
+    	</div>
+    	<div class="col-xs-9">
+    		<div class="row">
+    			<div class="row searchbg">
+                    <div class="col-sm-1">
+                       <!-- <span class="tt pull-right"><font color="#696969">CPGEA</font> &nbsp;&nbsp;</span>-->
+                    </div>
+                    <form method="POST">
+                    <div class="col-sm-2 mtop13">
+                        <select class="form-control height36 new-form-control1" name="query_type" id="query_type">
+                            <option value="outcome">&nbsp;&nbsp;outcome</option>
+                            <option value="Sample">&nbsp;&nbsp;Sample</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 mtop13">
+                        <select class="form-control height36 new-form-control1" name="query_class" id="query_class">
+                            {% for outcome in list_outcome %}
+                            <option value="{{ outcome }}">&nbsp;&nbsp;{{ outcome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-6 mtop13">
+                        <input type="text" class="form-control height36 new-form-control1" name="valuex" id="valuex">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" name="submit" class="btn btn-green button_query" style="background-color:#C0C0C0">Search</button>
+                    </div>
+                </form>
+                </div>
+    		</div>
+    		<hr>
+    		{# table content #}
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+                        <thead>
+                            <tr>
+                                {% for key in data[0].keys() %}
+                                <th>{{ key }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+    	</div>
+    </div>
+</div>
+<script>
+var x_list = [0,393];
+var assign_width = 700;
+var assign_height = 160;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+var svg = d3.select("#containerx")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+</script>
+{% endblock %}

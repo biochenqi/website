@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+
+.panel-heading > font {
+    size:120%;
+    font-weight:bold;
+    color:black
+}
+/* .list-group-item-highlight {
+    cursor: pointer;
+    background-color: #E0E0E0
+}
+.list-group-item-highlight-click {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+} */
+thead,tbody {
+    white-space: nowrap;
+    min-width: 150px;
+}
+
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#cnv').DataTable({
+        	"scrollY": 600,
+            "scrollX": true,
+            searching: false,
+            "ordering": true,
+            "aLengthMenu" : [10, 20, 50, 100], //更改显示记录数选项
+            "iDisplayLength" : 20, //默认显示的记录数
+        });
+    } );
+</script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+<script>
+    // 固定位置
+    $(document).ready(function(){
+        $("#myNav").affix({
+            offset: { 
+                top: -100
+          }
+        });
+    });
+    // 手型+背景色
+    // $(document).ready(function(){
+    //     $("ul.list-group>.list-group-item").bind("mouseover", function(){
+    //         $(this).addClass('list-group-item-highlight');
+    //     }).bind('mouseout', function(){
+    //         $(this).removeClass('list-group-item-highlight');
+    //     })
+    // });
+    // // 点击+显示特定内容
+    // $(document).ready(function(){
+    //     $("ul.list-group>.list-group-item").bind("click", function(){
+    //         $(this).siblings().removeClass('list-group-item-highlight-click');
+    //         $(this).addClass('list-group-item-highlight-click');
+    //         var $header = $(this).text();
+    //         $('.content>.panel').hide();
+    //         $('.content .panel-heading')
+    //         .filter(":contains(" + $header + ")")
+    //         .closest('.panel').show();
+    //     })
+    // })
+    $(document).ready(function(){
+    $("#menu li").click(function(){
+        $(this).find('ul').slideToggle();
+    });
+});
+    </script>
+
+{% endblock %}
+
+{% block Browse %}active{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    	<div class="col-xs-3">
+    		<div class="panel panel-info">
+                <div class="panel-heading">
+                 <!-- <font>&nbsp;{% trans %}Measurement {% endtrans %}</font> -->
+                 <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;{% trans %}Measurement {% endtrans %}</h3>
+                </div>
+                <!-- <ul id="menu">
+                    <li><a href="{{ url_for('browse', text='all') }}" class="list-group-item"> {% trans %}All {% endtrans %}</a>
+                      <ul class="submenu">
+                        {% for key in classes %}
+                        <li><a href="{{ url_for('browse', text=key) }}" class="list-group-item"> {{ key }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                </ul> -->
+                <a href="{{ url_for('browse', text='all') }}" class="list-group-item"> {% trans %}All {% endtrans %}</a>
+                {% for key in classes %}
+                <a href="{{ url_for('browse', text=key) }}" class="list-group-item"> {{ key }}</a>
+                {% endfor %}
+            </div>
+        <!-- <div style="height: 400px"></div> -->
+    	</div>
+    	<div class="col-xs-9">
+    		{# table content #}
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+                        <thead>
+                            <tr>
+                                {% for key in data[0].keys() %}
+                                <th>{{ key }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+    	</div>
+    </div>
+</div>
+<script>
+    var x_list = [0,393];
+    var assign_width = 700;
+    var assign_height = 160;
+    var padding = {top: 0, right: 60, bottom: 30, left: 13};
+    var width = assign_width;
+    var height = assign_height;
+    var svg = d3.select("#containerx")
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+    </script>
+{% endblock %}

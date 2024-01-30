@@ -1,0 +1,586 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<!--
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+-->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.22/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.22/datatables.min.js"></script>
+<style type="text/css">
+    .control-label {
+        font-size: 12px;
+    }
+    .selected {
+        background-color: #DFF0D8;
+    }
+    #topPlugin {
+        float: left;
+        margin-left: 0%;
+    }
+    div.dataTables_paginate {
+        margin: 0;
+        white-space: nowrap;
+        text-align: right;
+        margin-top: 5px;
+    }
+    .table th, .table td { 
+        text-align: center; 
+        height:25px;
+    }
+    .table > tbody > tr > td {
+        text-align:  center;
+    }
+    .table > thead:first-child > tr:first-child > th {
+        text-align: center;
+    }
+    div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+    .wrapper{
+        background: #FFF8DC;
+    }
+    .top{
+        background: #E6E6FA;
+    }
+    .bottom{
+        background: #ADD8E6;
+    }
+    .clear{
+        background: green;
+    }
+</style>
+<!--
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+-->
+<script>
+    $(document).ready(function() {
+        var table = $('#all_sampleinfos').DataTable({
+            "scrollX": true,
+            // "scrollY": 680,
+            // "scrollCollapse": true, //当显示更少的记录时，是否允许表格减少高度
+            "searching":false,
+            "ordering": true, //表格在初始化的时候的排序
+            "order": [[ 5, 'asc' ]], //表格在初始化的时候的排序
+            "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "ALL"]], //更改显示记录数选项
+            "pageLength" : 25, //默认显示的记录数
+            "pagingType": "full_numbers",
+            "autoWidth" : false, //是否自适应宽度
+            "processing": true,
+            "stateSave": true,
+            //"deferRender": true, //使用Ajax加载数据时仅需要显示的数据会在页面上绘制DOM元素而创建DOM元素，从而减少了首次将数据插入表时的初始CPU负载。
+            "orderClasses": true, // 高亮显示表格中排序的列
+            "orderMulti": true, // 按住shift点击表头，多列排序
+            // "stripeClasses": [ 'strip1', 'strip2', 'strip3' ], // 设置斑马条（奇偶行）的css class
+            // "dom": '<l<\'#topPlugin\'>f>rt<ip><"clear">',
+            // "dom": '<"top"l>rt<"bottom"ip><"clear">',
+            "dom": '<"wrapper"lrtip>',
+            "columnDefs": [
+                {
+                    "targets" : [0], // 指定的列
+                    "width": "3%",
+                    "orderable" : false, // 禁用排序
+                    "searchable": false,
+                    //"data" : 0,
+                    //"render" : function(data, type, full, meta) {
+                    //    return '<input type="checkbox" value="'+ data + '" name="checklist"/>';
+                    //}
+                },
+                {
+                    "targets": [2, 3, 4],
+                    "orderable" : false
+                }
+            ],
+            initComplete:initComplete, // 初始化结束后的回调函数
+            drawCallback: function (settings) {
+                $('input[name=allChecked]')[0].checked = false;
+            }, // 表格每次重绘回调函数, 默认保持全不选状态
+        });
+        //
+        function initComplete(data) {
+            var topPlugin='&nbsp;<button class="btn btn-info btn-sm" id="expcsv">CSV</button>&nbsp;<button class="btn btn-info btn-sm" id="qmaf">MAF</button>&nbsp;<button class="btn btn-info btn-sm" id="qsnv">SNV</button>&nbsp;<button class="btn btn-info btn-sm" id="qcnv">CNV</button>'
+            $("#topPlugin").append(topPlugin);
+        }
+        //
+        /*
+        $('#all_sampleinfos tbody').on('click', 'tr', function(event) {
+            var allChecked = $('input[name=allChecked]')[0]; // 关联全选单选框
+            $($(this).children()[0]).children().each(function(){
+                if(this.type == "checkbox" && (!$(event.target).is(":checkbox") && $(":checkbox", this).trigger("click"))){
+                    if(!this.checked){
+                        this.checked = true;
+                        addValue(this);
+                        var selected = table.rows('.selected').data().length;//被选中的行数
+                        //全选单选框的状态处理
+                        var recordsDisplay = table.page.info().recordsDisplay;//搜索条件过滤后的总行数
+                        var iDisplayStart = table.page.info().start;// 起始行数
+                        if(selected === table.page.len() || selected === recordsDisplay || selected === (recordsDisplay - iDisplayStart)){
+                            allChecked.checked = true;
+                        }
+                    }else{
+                        this.checked = false;
+                        cancelValue(this);
+                        allChecked.checked = false;
+                    }
+                }
+            });
+            $(this).toggleClass('selected');//放在最后处理，以便给checkbox做检测
+        });
+        //
+        $('input[name=allChecked]').click(function(){
+            if(this.checked){
+                $('#all_sampleinfos tbody tr').each(function(){
+                    if(!$(this).hasClass('selected')){
+                        $(this).click();
+                    }
+                });
+            }else{
+                $('#all_sampleinfos tbody tr').click();
+            }
+        });
+        */
+        // 复选框事件
+        $("#checkAll").click(function(){
+            $('[name=sample]:checkbox').attr("checked", this.checked);
+        });
+        $("input[name=sample]:checkbox").click(function(){
+            var $tmp = $('input[name=sample]:checkbox');
+            $('#checkAll').attr('checked', $tmp.length === $tmp.filter(':checked').length);
+        });
+        //
+        var lastIdx = null;
+        $('#all_sampleinfos tbody').on('mouseover', 'td', function () {
+            var colIdx = table.cell(this).index().column;
+            if (colIdx !== lastIdx) {
+                $(table.cells().nodes()).removeClass('highlight');
+                $(table.column(colIdx).nodes()).addClass('highlight');
+            }
+        }).on('mouseleave', function () {
+            $(table.cells().nodes()).removeClass('highlight');
+        });
+        //
+    })
+</script>
+{% endblock %}
+
+{% block qc_active %}active{% endblock %}
+
+{% block content %}
+<div class="container">
+    {# table content #}
+    <br>
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <!-- 多条件搜索 start -->
+                <form class="form-horizontal" action="{% url 'cccga:sample_qc' %}" method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <label class="col-sm-2 control-label">{# Sample Id #}样本编号:</label>
+                      <div class="col-sm-2">
+                        <input type="text" class="form-control" id="barcode" name="barcode" value="{{ infos.args.barcode|default:'' }}" style="width: 100%">
+                      </div>
+                      <label class="col-sm-2 control-label">{# Pathological Stage #}病理分期:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" id="patho-stage" name="patho-stage">
+                          <option value=""></option>
+                          {% for ps in infos.pathological_stages %}
+                          {% if ps == infos.args.pathological_stage|default:'' %}
+                          <option value="{{ ps }}" selected>{{ ps }}</option>
+                          {% else %}
+                          <option value="{{ ps }}">{{ ps }}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <label class="col-sm-2 control-label">{# Primary Tumor Location #}原发灶部位:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" id="pri-loc" name="pri-loc">
+                          <option value=""></option>
+                          {% for pl in infos.primary_locations %}
+                          {% if pl == infos.args.primary_location|default:'' %}
+                          <option value="{{ pl }}" selected>{{ pl }}</option>
+                          {% else %}
+                          <option value="{{ pl }}">{{ pl }}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <label class="col-sm-2 control-label">{# Detailed Tumor Site #}肿瘤发生位置:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" id="det-site" name="det-site">
+                          <option value=""></option>
+                          {% for ds in infos.detailed_sites %}
+                          {% if ds == infos.args.detailed_site|default:'' %}
+                          <option value="{{ ds }}" selected>{{ ds }}</option>
+                          {% else %}
+                          <option value="{{ ds }}">{{ ds }}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="col-sm-1">
+                        <button  type="submit" name="action" value="search" class="btn btn-success search" style="float: right;">{# Search #}搜索</button>
+                      </div>
+                      <div class="col-sm-1">
+                        <button  type="submit" name="action" value="reset" class="btn btn-primary search" style="float: left;">{# Reset #}重置</button>
+                      </div>
+                    </div>
+                  </div> 
+                </form>
+                <!-- 多条件搜索 end -->
+                <hr />
+                <!-- 执行批量操作按钮 start -->
+                <div style="float: right;">
+                    <button class="btn btn-info btn-sm" id="expcsv" data-toggle="modal" data-target="#modal-expcsv">CSV</button>&nbsp;
+                    <button class="btn btn-info btn-sm" id="qmaf">MAF</button>&nbsp;
+                    <button class="btn btn-info btn-sm" id="qsnv">SNV</button>&nbsp;
+                    <button class="btn btn-info btn-sm" id="qcnv">CNV</button>
+                    <!-- expcsv Modal start -->
+                    <div class="modal fade" id="modal-expcsv" tabindex="-1" role="dialog" aria-labelledby="ModalLabel-expcsv" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title" id="ModalLabel-expcsv">Select Export CSV</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <ul>
+                                        <li><input type="checkbox" name="export" value="clinic" />&nbsp;clinic information</li>
+                                        <li><input type="checkbox" name="export" value="tumor" />&nbsp;tumor sample qc</li>
+                                        <li><input type="checkbox" name="export" value="normal" />&nbsp;normal sample qc</li>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="csv-export">Export</button>
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- expcsv Modal end -->
+                </div>
+                <!-- 执行批量操作按钮 end -->
+                <!-- datatables start -->
+                <table id="all_sampleinfos" class="table table-bordered table-hover display" style="width:100%">
+                    <thead>
+                        <tr style="background-color: #eee">
+                            <th><input type="checkbox" name="allChecked" value="" id="checkAll" /></th>
+                            <th>{# Sample Id #}样本编号</th>
+                            <th>{# Clinic Information #}临床信息</th>
+                            <th>{# Tumor Seq #}肿瘤样本信息</th>
+                            <th>{# Normal Seq #}肿瘤样本对照信息</th>
+                            <th>{# Pathological Stage #}病理分期</th>
+                            <th>{# Primary Tumor Location #}原发灶部位</th>
+                            <th>{# Detailed Tumor Site #}肿瘤发生位置</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in infos.sampleinfos %}
+                        <tr>
+                            <td><input type="checkbox" name="sample" value="{{ info.barcode }}" id="{{ info.barcode }}" /></td>
+                            <td>{{ info.sampleid }}</td>
+                            <!--
+                            <td><a href="#clinicinfo-{{ info.barcode }}" data-toggle="modal">{{ info.barcode }}</a></td>-->
+                            <td><a href="#clinicinfo-{{ info.barcode }}">{{ info.barcode }}</a></td>
+                            <!-- Modal start
+                            <div class="modal fade" id="clinicinfo-{{ info.barcode }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel-{{ info.barcode }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h3 class="modal-title" id="ModalLabel-{{ info.barcode }}">Clinic Information</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4><strong>{{ info.barcode }}</strong></h4>
+                                            <p class="text-capitalize">gender:&nbsp;
+                                                <strong>{{ info.gender }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">diagnosis age:&nbsp;
+                                                <strong>{{ info.diagnosis_age }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">surgery date:&nbsp;
+                                                <strong>{{ info.surgery_date }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">pathological grade:&nbsp;
+                                                <strong>{{ info.pathological_grade }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">pathological stage:&nbsp;
+                                                <strong>{{ info.pathological_stage }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">primary tumor location:&nbsp;
+                                                <strong>{{ info.primary_location }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">detailed tumor site:&nbsp;
+                                                <strong>{{ info.detailed_site }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">metastasis at diagnosis:&nbsp;
+                                                <strong>{{ info.metastasis }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">time from diagnosis to death new:&nbsp;
+                                                <strong>{{ info.time_os }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">ajcc T stage:&nbsp;
+                                                <strong>{{ info.ajcc_T_stage }}</strong>
+                                            </p>
+                                            <p class="text-capitalize">ajcc N stage:&nbsp;
+                                                <strong>{{ info.ajcc_N_stage }}</strong>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            Modal end -->
+                            <td><a href="#tsampleqcs-{{ info.tsampleid }}">{{ info.tsampleid }}</a></td>
+                            <!-- Modal start -->
+                            <!-- Modal end -->
+                            <td><a href="#nsampleqcs-{{ info.nsampleid }}">{{ info.nsampleid }}</a></td>
+                            <!-- Modal start -->
+                            <!-- Modal end -->
+                            <td>{{ info.pathological_stage }}</td>
+                            <td>{{ info.primary_location }}</td>
+                            <td>{{ info.detailed_site }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- datatables end -->
+              </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+<!-- export csv start -->
+<script>
+    $(document).ready(function(){
+        $("#csv-export").click(function(){
+            var contents = new Array();
+            $('input[name="export"]:checked').each(function(i){
+                contents[i] = $(this).val();
+            });
+            contents = contents.join(',');
+            console.log(contents);
+            var samples = new Array();
+            $('input[name="sample"]:checked').each(function(i){
+                samples[i] = $(this).val();
+            });
+            samples = samples.join(',');
+            console.log(samples);
+            $.get("{% url 'cccga:ajax_sampleinfo' %}",
+                {
+                    contents: contents,
+                    samples: samples,
+                    infoType: 'export'
+                },
+                function(data, textStatus){
+                    var sample = data.samples;
+                    console.log(sample);
+                    $('#modal-expcsv').modal('hide');
+                }, "json"
+            );
+            //$('#modal-expcsv').modal('hide');
+            //$('#modal-expcsv').on('hide.bs.modal', function() {
+            //    alert('export successful.');
+            //});
+        });
+    });
+</script>
+<!-- export csv end -->
+<!-- Modal start -->
+<script>
+    $(document).ready(function(){
+        $('a[href^="#clinicinfo-"]').click(function(){
+            var barcode = $(this).text();
+            //console.log(barcode);
+            $.get("{% url 'cccga:ajax_sampleinfo' %}",
+                {
+                    barcode: barcode,
+                    infoType: 'clinic'
+                },
+                function (data, textStatus){
+                var txtHtml = `
+                            <div class="modal fade" id="clinicinfo-${barcode}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel-${barcode}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h3 class="modal-title" id="ModalLabel-${barcode}">Clinic Information</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4><strong>${data.barcode}</strong></h4>
+                                            <p class="text-capitalize">gender:&nbsp;
+                                                <strong>${data.gender}</strong>
+                                            </p>
+                                            <p class="text-capitalize">diagnosis age:&nbsp;
+                                                <strong>${data.diagnosis_age}</strong>
+                                            </p>
+                                            <p class="text-capitalize">surgery date:&nbsp;
+                                                <strong>${data.surgery_date}</strong>
+                                            </p>
+                                            <p class="text-capitalize">pathological grade:&nbsp;
+                                                <strong>${data.pathological_grade}</strong>
+                                            </p>
+                                            <p class="text-capitalize">pathological stage:&nbsp;
+                                                <strong>${data.pathological_stage}</strong>
+                                            </p>
+                                            <p class="text-capitalize">primary tumor location:&nbsp;
+                                                <strong>${data.primary_location}</strong>
+                                            </p>
+                                            <p class="text-capitalize">detailed tumor site:&nbsp;
+                                                <strong>${data.detailed_site}</strong>
+                                            </p>
+                                            <p class="text-capitalize">metastasis at diagnosis:&nbsp;
+                                                <strong>${data.metastasis}</strong>
+                                            </p>
+                                            <p class="text-capitalize">time from diagnosis to death new:&nbsp;
+                                                <strong>${data.time_os}</strong>
+                                            </p>
+                                            <p class="text-capitalize">ajcc T stage:&nbsp;
+                                                <strong>${data.ajcc_T_stage}</strong>
+                                            </p>
+                                            <p class="text-capitalize">ajcc N stage:&nbsp;
+                                                <strong>${data.ajcc_N_stage}</strong>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal">close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                //var $td = $('a[href="#clinicinfo-' + barcode + '"]').closest('td');
+                //$td.after(txtHtml);
+                $('table').before(txtHtml);
+                $("#clinicinfo-" + barcode).modal('show');
+            }, "json");
+        });
+    });
+</script>
+<!-- Modal end -->
+<!-- Modal start -->
+<script>
+    $(document).ready(function(){
+        $('a[href^="#tsampleqcs-"]').click(function(){
+            var barcode = $(this).text();
+            //console.log(barcode);
+            $.get("{% url 'cccga:ajax_sampleinfo' %}",
+                {
+                    barcode: barcode,
+                    infoType: 'tsampleqc'
+                },
+                function (data, textStatus){
+                var txtHtml = `
+                            <div class="modal fade" id="tsampleqcs-${barcode}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel-${barcode}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h3 class="modal-title" id="ModalLabel-${barcode}">Sequencing Information</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4><strong>${data.tsampleid}</strong></h4>
+                                            <p class="text-capitalize">library type:&nbsp;
+                                                <strong>${data.lib_type}</strong>
+                                            </p>
+                                            <p class="text-capitalize">raw base number(G):&nbsp;
+                                                <strong>${data.rawsize}</strong>
+                                            </p>
+                                            <p class="text-capitalize">duplicate rate(%):&nbsp;
+                                                <strong>${data.duplicate_rate}</strong>
+                                            </p>
+                                            <p class="text-capitalize">fraction of effective bases on target(%):&nbsp;
+                                                <strong>${data.foebot}</strong>
+                                            </p>
+                                            <p class="text-capitalize">average sequencing depth on target:&nbsp;
+                                                <strong>${data.asdot}</strong>
+                                            </p>
+                                            <p class="text-capitalize">coverage of target region(%):&nbsp;
+                                                <strong>${data.cotr}</strong>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal">close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                //var $td = $('a[href="#clinicinfo-' + barcode + '"]').closest('td');
+                //$td.after(txtHtml);
+                $('table').before(txtHtml);
+                $("#tsampleqcs-" + barcode).modal('show');
+            }, "json");
+        });
+    });
+</script>
+<!-- Modal end -->
+<!-- Modal start -->
+<script>
+    $(document).ready(function(){
+        $('a[href^="#nsampleqcs-"]').click(function(){
+            var barcode = $(this).text();
+            //console.log(barcode);
+            $.get("{% url 'cccga:ajax_sampleinfo' %}",
+                {
+                    barcode: barcode,
+                    infoType: 'nsampleqc'
+                },
+                function (data, textStatus){
+                var txtHtml = `
+                            <div class="modal fade" id="nsampleqcs-${barcode}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel-${barcode}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h3 class="modal-title" id="ModalLabel-${barcode}">Sequencing Information</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4><strong>${data.nsampleid}</strong><small>&nbsp;&nbsp;control</small></h4>
+                                            <p class="text-capitalize">library type:&nbsp;
+                                                <strong>${data.lib_type}</strong>
+                                            </p>
+                                            <p class="text-capitalize">raw base number(G):&nbsp;
+                                                <strong>${data.rawsize}</strong>
+                                            </p>
+                                            <p class="text-capitalize">duplicate rate(%):&nbsp;
+                                                <strong>${data.duplicate_rate}</strong>
+                                            </p>
+                                            <p class="text-capitalize">fraction of effective bases on target(%):&nbsp;
+                                                <strong>${data.foebot}</strong>
+                                            </p>
+                                            <p class="text-capitalize">average sequencing depth on target:&nbsp;
+                                                <strong>${data.asdot}</strong>
+                                            </p>
+                                            <p class="text-capitalize">coverage of target region(%):&nbsp;
+                                                <strong>${data.cotr}</strong>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal">close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                //var $td = $('a[href="#clinicinfo-' + barcode + '"]').closest('td');
+                //$td.after(txtHtml);
+                $('table').before(txtHtml);
+                $("#nsampleqcs-" + barcode).modal('show');
+            }, "json");
+        });
+    });
+</script>
+<!-- Modal end -->
+{% endblock %}

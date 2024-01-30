@@ -1,0 +1,417 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-09 06:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cccga/templates/cccga/base.html:117
+msgid "Home"
+msgstr "首页"
+
+#: cccga/templates/cccga/base.html:120 cccga/templates/cccga/workflow.html:61
+msgid "Analysis Workflow"
+msgstr "分析流程"
+
+#: cccga/templates/cccga/base.html:123
+msgid "Sample Information"
+msgstr "样本信息"
+
+#: cccga/templates/cccga/base.html:126
+msgid "Variation"
+msgstr "变异图谱"
+
+#: cccga/templates/cccga/base.html:129
+msgid "Download"
+msgstr "下载"
+
+#: cccga/templates/cccga/base.html:154
+msgid "All Rights Reserved"
+msgstr "版权所有"
+
+#: cccga/templates/cccga/base.html:161
+msgid "Languages"
+msgstr "语言"
+
+#: cccga/templates/cccga/base_variation.html:20
+msgid "Variation Viewer"
+msgstr "查看变异图谱"
+
+#: cccga/templates/cccga/base_variation.html:22
+msgid "Overview"
+msgstr "概览"
+
+#: cccga/templates/cccga/base_variation.html:23
+msgid "Cohort Study"
+msgstr "队列研究"
+
+#: cccga/templates/cccga/base_variation.html:26
+msgid "Search Gene"
+msgstr "查询基因变异图谱"
+
+#: cccga/templates/cccga/category.html:9
+msgid "Colon Cancer Detailed Sites"
+msgstr "结直肠癌肿瘤发生位置变异类型"
+
+#: cccga/templates/cccga/index.html:23
+msgid "Genomic landscape of Chinese Colorectal Cancer"
+msgstr "中国结直肠癌基因组图谱"
+
+#: cccga/templates/cccga/index.html:26
+msgid ""
+"Colorectal cancer is the most common malignant tumor in the gastrointestinal "
+"tract. At present, colorectal cancer ranks the third in the incidence of "
+"malignant tumors in China and shows an increasing trend in recent years. "
+"Genomic landscape of Chinese colorectal cancer is the largest cancer genome "
+"study in China at present. We collected 1015 samples with paired samples and "
+"500 cfDNA samples. The clinical information is relatively comprehensive, and "
+"the genomic characteristics of the Chinese population are displayed "
+"comprehensively, providing rich resources for deepening the understanding of "
+"Chinese colorectal cancer."
+msgstr ""
+"结直肠癌是胃肠道最常见的恶性肿瘤，目前，结直肠癌在我国恶性肿瘤发病排名中位列"
+"第三，近几年呈上升趋势。中国结直肠癌基因组图谱是目前国内规模最大的癌症基因组"
+"研究，我们收集了1015例有配对样本和500例cfDNA样本的病例，临床信息较为全面，全"
+"面展示了中国人群的基因组特征，为加深对中国结直肠癌的理解提供了丰富的资源。"
+
+#: cccga/templates/cccga/index.html:50
+msgid "Sex"
+msgstr "性别分布情况"
+
+#: cccga/templates/cccga/index.html:92
+msgid "Age at Diagnosis"
+msgstr "诊断年龄分布情况"
+
+#: cccga/templates/cccga/index.html:121
+msgid "age at diagnosis"
+msgstr "诊断年龄"
+
+#: cccga/templates/cccga/index.html:121
+msgid "number of samples"
+msgstr "该年龄区间样本数"
+
+#: cccga/templates/cccga/index.html:160
+msgid "Overall Survival"
+msgstr "总生存期变化"
+
+#: cccga/templates/cccga/index.html:233
+msgid "Sample Number in Different Pathological Stage"
+msgstr "不同病理分期样本数"
+
+#: cccga/templates/cccga/index.html:277
+msgid "Statistics"
+msgstr "信息统计"
+
+#: cccga/templates/cccga/index.html:280
+msgid "Patients"
+msgstr "患者人数"
+
+#: cccga/templates/cccga/index.html:281
+msgid "Samples"
+msgstr "样本数"
+
+#: cccga/templates/cccga/index.html:282
+msgid "mCRC Primary"
+msgstr "转移性结直肠癌原发灶样本数"
+
+#: cccga/templates/cccga/index.html:283
+msgid "mCRC Metastasis"
+msgstr "转移性结直肠癌转移灶样本数"
+
+#: cccga/templates/cccga/index.html:284
+msgid "Capture Probe"
+msgstr "捕获探针类型"
+
+#: cccga/templates/cccga/index.html:289
+msgid "Related Databases & Links"
+msgstr "相关数据库"
+
+#: cccga/templates/cccga/index.html:299
+msgid "How to Cite"
+msgstr "引用"
+
+#: cccga/templates/cccga/index.html:302
+msgid "Please cite the following required publications"
+msgstr "引用文献"
+
+#: cccga/templates/cccga/query_gene.html:14
+msgid "Go!"
+msgstr "查询"
+
+#: cccga/templates/cccga/query_gene.html:20
+msgid "Please enter the gene name, such as"
+msgstr "请输入基因名称，如"
+
+#: cccga/templates/cccga/sampleqc.html:456
+#: cccga/templates/cccga/sampleqc.html:540
+msgid "Sample Id"
+msgstr "样本编号"
+
+#: cccga/templates/cccga/sampleqc.html:460
+#: cccga/templates/cccga/sampleqc.html:544
+msgid "Pathological Stage"
+msgstr "病理分期"
+
+#: cccga/templates/cccga/sampleqc.html:474
+#: cccga/templates/cccga/sampleqc.html:545
+msgid "Primary Tumor Location"
+msgstr "原发灶部位"
+
+#: cccga/templates/cccga/sampleqc.html:483
+#: cccga/templates/cccga/sampleqc.html:546
+msgid "Detailed Tumor Site"
+msgstr "肿瘤发生位置"
+
+#: cccga/templates/cccga/sampleqc.html:493
+msgid "Search"
+msgstr "搜索"
+
+#: cccga/templates/cccga/sampleqc.html:496
+msgid "Reset"
+msgstr "重置"
+
+#: cccga/templates/cccga/sampleqc.html:541
+msgid "Clinic Information"
+msgstr "临床信息"
+
+#: cccga/templates/cccga/sampleqc.html:542
+msgid "Tumor Seq"
+msgstr "肿瘤样本信息"
+
+#: cccga/templates/cccga/sampleqc.html:543
+msgid "Normal Seq"
+msgstr "肿瘤样本对照信息"
+
+#: cccga/templates/cccga/variation.html:21
+#: cccga/templates/cccga/variation_nographic.html:21
+msgid "Variants Overview"
+msgstr "群体变异概览"
+
+#: cccga/templates/cccga/workflow.html:64
+#: cccga/templates/cccga/workflow.html:78
+msgid "Quality Check and Raw Data Conversion"
+msgstr "数据质控"
+
+#: cccga/templates/cccga/workflow.html:65
+#: cccga/templates/cccga/workflow.html:94
+msgid "Alignment"
+msgstr "参考基因组比对"
+
+#: cccga/templates/cccga/workflow.html:66
+#: cccga/templates/cccga/workflow.html:102
+msgid "Mutation Calling"
+msgstr "变异检测"
+
+#: cccga/templates/cccga/workflow.html:67
+#: cccga/templates/cccga/workflow.html:124
+msgid "Annotation and Filtering Strategies"
+msgstr "变异注释及筛选"
+
+#: cccga/templates/cccga/workflow.html:68
+#: cccga/templates/cccga/workflow.html:137
+msgid "CNV Calling and GISTIC Analysis"
+msgstr "CNV检测及GISTIC分析"
+
+#: cccga/templates/cccga/workflow.html:69
+#: cccga/templates/cccga/workflow.html:147
+msgid "Signature Identification and Decomposition"
+msgstr "突变特征分析"
+
+#: cccga/templates/cccga/workflow.html:80
+msgid "Raw Sequencing Data were preprocessed by"
+msgstr "使用"
+
+#: cccga/templates/cccga/workflow.html:80
+msgid " for subsequent analysis:"
+msgstr ""
+"对原始数据（Raw Data）进行处理，过滤低质量序列，得到有效数据（Clean Data）。"
+"过滤内容包括："
+
+#: cccga/templates/cccga/workflow.html:81
+msgid "adapter trimming"
+msgstr "去除Reads中的接头序列"
+
+#: cccga/templates/cccga/workflow.html:82
+msgid "remove the reads in which the N base has reached a certain percentage"
+msgstr "去除N（N 表示无法确定碱基信息）碱基数达到一定比例的Reads"
+
+#: cccga/templates/cccga/workflow.html:82
+msgid "default length of"
+msgstr "默认长度"
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "remove the reads which contain low quality bases"
+msgstr "去除所含低质量碱基"
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "default quality threshold value"
+msgstr "默认质量值"
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "above a certain portion"
+msgstr "超过一定比例"
+
+#: cccga/templates/cccga/workflow.html:83
+msgid "default"
+msgstr "默认"
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "sliding window trimming: the bases in the sliding window"
+msgstr "滑窗质量剪裁：以一定范围"
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "default is"
+msgstr "默认值"
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "with mean quality below cutting quality"
+msgstr "作为滑窗大小，对平均质量低于特定值"
+
+#: cccga/templates/cccga/workflow.html:84
+msgid "will be cut"
+msgstr "的进行剪裁"
+
+#: cccga/templates/cccga/workflow.html:96
+msgid ""
+"The sequenced reads were aligned to the reference human genome (build hg19) "
+"using sentieon bwa-mem. Subsequent processing including sorting read and "
+"marking duplicates were performed using sentieon tools v201808 (https://www."
+"sentieon.com/ ), which were improved upon the GATK Toolkit (https://gatk."
+"broadinstitute.org/hc/en-us). Sequence depth and coverage were obtained "
+"using bamdst (https://github.com/shiquan/bamdst)."
+msgstr ""
+"有效测序数据通过sentieon bwa-mem(https://www.sentieon.com/)比对到参考基因组"
+"(hg19)，得到最初的BAM格式比对结果。使用sentieon(v201808)工具对BAM文件进行排"
+"序、创建索引、过滤重复reads等处理，得到BAM格式的最终比对结果，并使用"
+"bamdst(https://github.com/shiquan/bamdst)统计测序深度和覆盖度。"
+
+#: cccga/templates/cccga/workflow.html:104
+msgid ""
+"To identify all the variants, we used three somatic mutation callers for "
+"single nucleotide variants (SNVs) and indels"
+msgstr ""
+"对于成对的肿瘤、对照样本，使用三种体细胞突变检测软件分析单核苷酸变异(SNV)、插"
+"入和缺失(INDEL)。软件及参数如下"
+
+#: cccga/templates/cccga/workflow.html:108
+msgid ""
+"To improve specificity, a panel of normal (PON) samples filtration was used "
+"to removed background germline variations and artifacts. Mutect2 and TNscope "
+"are based on bam files which processed by quality score recalibration that "
+"performed using GATK4 (v 4.1.1.0) (McKenna et al., 2010)."
+msgstr ""
+"Mutect2、TNscope使用经GATK4(v4.1.1.0)(McKenna et al., 2010)质量校正(Base "
+"Quality Score Recalibration，BQSR)的比对BAM文件作为输入。为了提高检测结果的准"
+"确性，构建了一组正常样本库(Panel of Normal，PON)用于过滤背景胚系突变及假阳性"
+"突变。"
+
+#: cccga/templates/cccga/workflow.html:109
+msgid "Specifically, processSomatic and somaticFilter"
+msgstr "使用processSomatic和somaticFilter"
+
+#: cccga/templates/cccga/workflow.html:109
+msgid ""
+"were used to extract high-confidence somatic variants from the raw VarScan2 "
+"results and to remove clusters of false positives and SNVs near indels. "
+"Additional filtration with fpfilter.pl script from Varscan2 was performed "
+"tumor read counts generated by bam-readcount(https://github.com/genome/bam-"
+"readcount) was performed to reduce false positive calls. We discarded SNVs "
+"in RepeatMasker repeat regions(http://www.repeatmasker.org)."
+msgstr ""
+"提取VarScan2结果中高可信度的体细胞突变，且过滤位于INDELs附近的假阳性SNVs。此"
+"外还使用Varscan2中的fpfilter.pl对肿瘤样本的reads支持数进行过滤，并过滤位于"
+"RepeatMasker(http://www.repeatmasker.org)注释重复区域的SNVs."
+
+#: cccga/templates/cccga/workflow.html:126
+msgid ""
+"Somatic mutations were then annotated using VEP(McLaren et al., 2016). To "
+"obtain reliable mutation calls, we used a two-step approach."
+msgstr "突变注释使用VEP软件，为了获得可靠的突变，我们做了两步过滤"
+
+#: cccga/templates/cccga/workflow.html:127
+msgid ""
+"First, chose mutations that were identified in at least two out of the three "
+"callers (Mutect2, TNscope and VarScan2)"
+msgstr "1、选择至少在在2个软件存在的突变（Mutect2, TNscope and VarScan2）"
+
+#: cccga/templates/cccga/workflow.html:128
+msgid "Second, additional filtering with three criteria was performed"
+msgstr "2、对以上注释结果进行以下条件过滤:"
+
+#: cccga/templates/cccga/workflow.html:129
+msgid "variant allele frequency"
+msgstr "突变频率"
+
+#: cccga/templates/cccga/workflow.html:130
+msgid "sequencing depth in the region"
+msgstr "测序深度"
+
+#: cccga/templates/cccga/workflow.html:131
+msgid "sequence reads in support of the variant call"
+msgstr "检出变异的reads数"
+
+#: cccga/templates/cccga/workflow.html:139
+msgid ""
+"CNV analusis was done using EXCAVATOR2 v1.1.2(D'Aurizio, R et al., 2016). "
+"EXCAVATOR2 is a collection of bash, R and Fortran scripts and codes that "
+"analyses WES data to identify CNVs. It extends the Read Count approach to "
+"the whole genome sequence and exploits the Shifting Level Model (SLM) "
+"algorithm to segment the two combined profiles."
+msgstr ""
+"使用EXCAVATOR2(v1.1.2)(D'Aurizio, R et al., 2016)分析样本基因组大片段序列的拷"
+"贝数变异(Copy number variation，CNV)，分为缺失(Deletion)和重复(Duplication)两"
+"种类型。基于样本的体细胞拷贝数变异(somatic copy number alterations，SCNA)及体"
+"细胞突变等位基因深度信息，使用R包ABSOLUTE(v1.0.6)(Carter, S. L et al., 2012)"
+"评估肿瘤样本的纯度与倍性。"
+
+#: cccga/templates/cccga/workflow.html:140
+msgid ""
+"To study significantly recurrent regions of SCNA, we applied GISTIC2 "
+"v2.0.23(Mermel et al., 2011) applied to the copy number segments. GISTIC2 "
+"was run with the following parameters"
+msgstr ""
+"为进一步研究样本显著扩增或缺失的基因组区域，使用GISTIC2(v2.0.23)(Mermel et "
+"al., 2011)分析队列的高频SCNA，参数为"
+
+#: cccga/templates/cccga/workflow.html:149
+msgid ""
+"Mutational signatures were identified using R package deconstructSigs "
+"(Rosenthal et al., 2016) from the CRC samples (only samples with at least 20 "
+"SNVs were included). The normalization method was set to ‘exome2genome’. "
+"This approach organized sample information in the form of the fraction of "
+"mutations in each of 96 trinucleotides and determined the weighted "
+"combination of the COSMIC signatures (https://cancer.sanger.ac.uk/cosmic/"
+"signatures) (Alexandrov et al., 2013) that most closely reconstructed the "
+"mutational profile."
+msgstr ""
+"使用R包 deconstructSigs（Rosenthal et al., 2016）分析肠癌样本（至少包含20个SNV）的突变特征，均一化方法使用“exome2genome”。统计肿瘤样本中96种点突变的突变比例并分解为COSMIC数据库的突变特征。"
+
+
+#: cccga/views.py:436 cccga/views.py:561
+#, python-format
+msgid "Amino Acid Changes for %(gene)s"
+msgstr "基因 %(gene)s 的突变图谱"
+
+#: sysucc/settings/base.py:114
+msgid "English"
+msgstr "英文"
+
+#: sysucc/settings/base.py:115
+msgid "Chinese"
+msgstr "简体中文"
+
+#~ msgid "Chinese Colorectal Cancer Genome Atlas"
+#~ msgstr "中国人群结直肠癌基因组图谱"

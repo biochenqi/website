@@ -1,0 +1,1206 @@
+{% extends "cccga/base_variation.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block varall_active %}active{% endblock %}
+{% block content-detail %}
+      <div class="panel panel-info">
+          <div class="panel-body">
+            <div id='variants-overview' style="width: 100%; height: 600px"></div>
+            {% autoescape off %}
+            <script>
+              var myChart = echarts.init(document.getElementById('variants-overview'));
+              var option = {
+                grid: [
+                  {right: '50%', bottom: '55%', left: '15%'},
+                  {left: '60%', bottom: '55%', right: '5%'},
+                  {right: '50%', top: '55%', left: '15%'},
+                  {left: '60%', top: '55%', right: '5%'}
+                ],
+                title: {
+                  text: '{% trans "Variants Overview" %}',
+                  //text: '群体变异概览',
+                  left: 'center'
+                },
+                tooltip: {
+                  //trigger: 'axis',
+                  //formatter: '{a}<br />{b}: {c}'
+                  formatter: '{b}<br />{a}: {c}%'
+                },
+                xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    name: 'Variation Classification',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'value',
+                    name: 'Variant Type',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'value',
+                    name: 'SNV Class',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  {
+                    gridIndex: 3,
+                    type: 'value',
+                    name: 'Top 10 Mutated Genes',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30,
+                    min: 0,
+                    max: {{ infos.top10genes.max }}
+                  }
+                ],
+                yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.varclass_all.name }}
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.vartype_all.name }}
+                  },
+                  {
+                    gridIndex: 2,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow',
+                    },
+                    data: {{ infos.snvclass_all.name }}
+                  },
+                  {
+                    gridIndex: 3,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: {{ infos.top10genes.name }}
+                  }
+                ],
+                series: [
+                {
+                  name: 'Variation Classification',
+                  type: 'bar',
+                  data: {{ infos.varclass_all.value }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['peru', 'pink', 'blue', 'purple', 'orange', 'red', 'green'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}'
+                  }
+                },
+                {
+                  name: 'Variant Type',
+                  type: 'bar',
+                  data: {{ infos.vartype_all.value }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['SkyBlue', 'Gold', 'Thistle'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 1,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}'
+                  }
+                },
+                {
+                  name: 'SNV Class',
+                  type: 'bar',
+                  data: {{ infos.snvclass_all.rate }},
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}%'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['RoyalBlue', 'SlateGray', 'SaddleBrown', 'ForestGreen', 'GoldenRod', 'VioletRed'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 2,
+                  yAxisIndex: 2,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}%'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Missense_Mutation',
+                  data: {{ infos.top10genes.missense }},
+                  itemStyle: {
+                    color: 'green'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Nonsense_Mutation',
+                  data: {{ infos.top10genes.nonsense }},
+                  itemStyle: {
+                    color: 'red'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Splice_Region',
+                  data: {{ infos.top10genes.splice }},
+                  itemStyle: {
+                    color: 'orange'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Frame_Shift_Ins',
+                  data: {{ infos.top10genes.fsi }},
+                  itemStyle: {
+                    color: 'purple'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'Frame_Shift_Del',
+                  data: {{ infos.top10genes.fsd }},
+                  itemStyle: {
+                    color: 'blue'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'In_Frame_Ins',
+                  data: {{ infos.top10genes.ifi }},
+                  itemStyle: {
+                    color: 'pink'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'ttg',
+                  xAxisIndex: 3,
+                  yAxisIndex: 3,
+                  name: 'In_Frame_Del',
+                  data: {{ infos.top10genes.ifd }},
+                  itemStyle: {
+                    color: 'peru'
+                  }
+                }
+                ]
+              };
+              myChart.setOption(option);
+            </script>
+            {% endautoescape %}
+            <br />
+            <div id='variants-per-sample' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+            function drawVariantsPerSample(data) {
+              var myChart = echarts.init(document.getElementById('variants-per-sample'));
+              var datas = [data.missense, data.nonsense, data.splice, data.fsi, data.fsd, data.ifi, data.ifd];
+              var fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru'];
+              var texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del'];
+              var series = [];
+              for (let i = 0; i < datas.length; i++) {
+                var sery = {
+                  type: 'bar',
+                  stack: 'vps',
+                  name: texts[i],
+                  data: datas[i],
+                  itemStyle: {
+                    color: fills[i]
+                  }
+                };
+                series.push(sery);
+              }
+              var option = {
+                title: {
+                  text: 'Variants Per Sample',
+                  //text: '群体单样本变异类型图谱',
+                  left: 'center'
+                },
+                tooltip: {
+                  /*
+                  trigger: 'axis',*/
+                  axisPointer: {
+                    type: 'shadow',
+                  },
+                  formatter: '{b}<br />{a}: {c}'
+                },
+                xAxis: [
+                {
+                  type: 'category',
+                  axisTick: {
+                    show: false
+                  },
+                  axisLabel: {
+                    show: false
+                  },
+                  data: data.tsampleid
+                }
+                ],
+                yAxis: [
+                {
+                  type: 'value',
+                  min: 0,
+                  max: data.max,
+                }
+                ],
+                dataZoom: [
+                  {
+                    start: 0,
+                    end: 10,
+                    //type: 'inside',
+                    type: 'slider',
+                    xAxisIndex: [0],
+                    showDetail: false
+                  }
+                ],
+                series: series
+              };
+              myChart.setOption(option);
+            }
+            $(document).ready(function(){
+              var data = {{ infos.varclass_per_sample }};
+              drawVariantsPerSample(data);
+            })
+            </script>
+            {% endautoescape %}
+            <br />
+            <div id='snvclass-per-sample' style="width: 100%; height: 500px"></div>
+            {% autoescape off %}
+            <script>
+            function drawSnvclassBar(data) {
+              var myChart = echarts.init(document.getElementById('snvclass-per-sample'));
+              var datas = [data.t2g, data.t2a, data.t2c, data.c2t, data.c2g, data.c2a];
+              var names = ['T>G', 'T>A', 'T>C', 'C>T', 'C>G', 'C>A'];
+              var colors = ['VioletRed', 'GoldenRod', 'ForestGreen', 'SaddleBrown', 'SlateGray', 'RoyalBlue'];
+              var series = [];
+              for (let i = 0; i < datas.length; i++) {
+                var sery = {
+                  type: 'bar',
+                  stack: 'sps',
+                  name: names[i],
+                  data: datas[i],
+                  itemStyle: {
+                    color: colors[i]
+                  }
+                };
+                series.push(sery);
+              }
+              var option = {
+                title: {
+                  text: 'SNV Class Per Sample',
+                  //text: '群体突变频谱',
+                  left: 'center'
+                },
+                tooltip: {
+                  formatter: '{b}<br />{a}: {c}'
+                },
+                xAxis: [
+                {
+                  type: 'category',
+                  axisTick: {
+                    show: false
+                  },
+                  axisLabel: {
+                    show: false
+                  },
+                  data: data.tsampleid
+                }
+                ],
+                yAxis: [
+                {
+                  type: 'value',
+                  min: 0,
+                  max: data.max,
+                  interval: 0.1
+                }
+                ],
+                dataZoom: [
+                  {
+                    start: 0,
+                    end: 10,
+                    //type: 'inside',
+                    type: 'slider',
+                    xAxisIndex: [0],
+                    showDetail: false
+                  }
+                ],
+                series: series
+              };
+              myChart.setOption(option);
+            }
+            $(document).ready(function(){
+              var data = {{ infos.snvclass_per_sample }};
+              drawSnvclassBar(data);
+            });
+            </script>
+            {% endautoescape %}
+            <!--
+            <div>
+              <hr />
+              <p class="text-center">参考模板</p>
+              <img src="{% static 'cccga/alter_types.png' %}" width="90%" height="90%">
+            </div>-->
+            <!--
+            <div>
+              <hr />
+              <img src="{% static 'cccga/oncoplot.png' %}" width="90%" height="90%">
+            </div>-->
+              <!-- alter-in-samples landscape start -->
+              <hr />
+              <div id="alter-in-samples" style="width: 100%; height:1000px;"></div>
+              {% autoescape off %}
+              <script>
+              function drawAlterInSamples(infos) {
+                var myChart = echarts.init(document.getElementById('alter-in-samples'));
+                var total_samples = 1015;
+                var topgenes = {{ infos.oncoplot.topgenes.name }};
+                var topgenes_rate = {{ infos.oncoplot.topgenes.sample_number }};
+                var topgenes_rate_p = [];
+                for (i = 0; i < topgenes_rate.length; i++) {
+                  topgenes_rate_p[i] = Math.round(topgenes_rate[i]) + '%'
+                }
+                var topgene_max = {{ infos.oncoplot.topgenes.max }};
+                var samples = {{ infos.oncoplot.topgenes.ssv.samples_list }};
+                var missenses = {{ infos.oncoplot.topgenes.ssv.missense_list }};
+                var nonsenses = {{ infos.oncoplot.topgenes.ssv.nonsense_list }};
+                var splices = {{ infos.oncoplot.topgenes.ssv.splice_list }};
+                var fsis = {{ infos.oncoplot.topgenes.ssv.fsi_list }};
+                var fsds = {{ infos.oncoplot.topgenes.ssv.fsd_list }};
+                var ifis = {{ infos.oncoplot.topgenes.ssv.ifi_list }};
+                var ifds = {{ infos.oncoplot.topgenes.ssv.ifd_list }};
+                var mhs = {{ infos.oncoplot.topgenes.ssv.mh_list }};
+                var series = [];
+                var tsampleid;
+                for (let i = 0; i < samples.length; i++) {
+                  tsampleid = samples[i];
+                  var control_data = [];
+                  for (let j = 0; j < topgenes.length; j++) {
+                    control_data[j] = i;
+                  }
+                  var missense_data = missenses[i].split('');
+                  var nonsense_data = nonsenses[i].split('');
+                  var splice_data = splices[i].split('');
+                  var fsi_data = fsis[i].split('');
+                  var fsd_data = fsds[i].split('');
+                  var ifi_data = ifis[i].split('');
+                  var ifd_data = ifds[i].split('');
+                  var mh_data = mhs[i].split('');
+                  // array push
+                  control_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'control',
+                      type: 'bar',
+                      stack: tsampleid,
+                      itemStyle: {
+                          barBorderColor: 'rgba(0,0,0,0)',
+                          color: 'rgba(0,0,0,0)'
+                      },
+                      emphasis: {
+                          itemStyle: {
+                              barBorderColor: 'rgba(0,0,0,0)',
+                              color: 'rgba(0,0,0,0)'
+                          }
+                      },
+                      data: control_data
+                  };
+                  missense_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Missense_Mutation',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: missense_data,
+                      itemStyle: {
+                        color: 'green'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  nonsense_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Nonsense_Mutation',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: nonsense_data,
+                      itemStyle: {
+                        color: 'red'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  splice_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Splice_Region',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: splice_data,
+                      itemStyle: {
+                        color: 'orange'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  fsi_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Frame_Shift_Ins',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: fsi_data,
+                      itemStyle: {
+                        color: 'purple'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  fsd_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Frame_Shift_Del',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: fsd_data,
+                      itemStyle: {
+                        color: 'blue'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  ifi_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'In_Frame_Ins',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: ifi_data,
+                      itemStyle: {
+                        color: 'pink'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  ifd_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'In_Frame_Del',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: ifd_data,
+                      itemStyle: {
+                        color: 'peru'
+                      },
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  mh_series = {
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                      name: 'Multi_Hit',
+                      type: 'bar',
+                      stack: tsampleid,
+                      data: mh_data,
+                      itemStyle: {
+                        color: 'black'
+                      },
+                      barGap: '-100%',
+                    tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                    }
+                  };
+                  series.push(control_series, missense_series, nonsense_series, splice_series, fsi_series, fsd_series, ifi_series, ifd_series, mh_series);
+                }
+                /*
+                var topgene_series = {
+                  name: 'top genes varclass',
+                  type: 'bar',
+                  data: topgenes_rate,
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{b}<br />varclass: {c}'
+                  }
+                };
+                series.push(topgene_series);*/
+                var topgene_series = [
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Missense_Mutation',
+                  data: {{ infos.oncoplot.topgenes.missense }},
+                  itemStyle: {
+                    color: 'green'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Nonsense_Mutation',
+                  data: {{ infos.oncoplot.topgenes.nonsense }},
+                  itemStyle: {
+                    color: 'red'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Splice_Region',
+                  data: {{ infos.oncoplot.topgenes.splice }},
+                  itemStyle: {
+                    color: 'orange'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Frame_Shift_Ins',
+                  data: {{ infos.oncoplot.topgenes.fsi }},
+                  itemStyle: {
+                    color: 'purple'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Frame_Shift_Del',
+                  data: {{ infos.oncoplot.topgenes.fsd }},
+                  itemStyle: {
+                    color: 'blue'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'In_Frame_Ins',
+                  data: {{ infos.oncoplot.topgenes.ifi }},
+                  itemStyle: {
+                    color: 'pink'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 2,
+                  yAxisIndex: 1,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'In_Frame_Del',
+                  data: {{ infos.oncoplot.topgenes.ifd }},
+                  itemStyle: {
+                    color: 'peru'
+                  }
+                }
+                ];
+                for (i = 0; i < topgene_series.length; i++) {
+                  series.push(topgene_series[i]);
+                }
+                // draw
+                var option = {
+                  grid: [
+                    {top: '10%', bottom: '30%'},
+                    {top: '75%'}
+                  ],
+                  title: {
+                    text: 'Altered in ' + samples.length + ' of ' + total_samples + ' samples',
+                    left: 'center'
+                  },
+                  tooltip: {
+                    //axisPointer: {
+                      //type: 'shadow',
+                    //},
+                    formatter: function(params) {
+                      //console.log(params);
+                    }
+                  },
+                  legend: {
+                    left: '15%',
+                    top: '90%',
+                    width: '75%',
+                    height: '5%',
+                    //orient: 'vertical',
+                    itemGap: 5,
+                    itemWidth: 10,
+                    itemHeight: 6,
+                    selected: {
+                      'control': true,
+                      'Missense_Mutation': true,
+                      'Splice_Region': true,
+                      'Frame_Shift_Ins': true,
+                      'Frame_Shift_Del': true,
+                      'In_Frame_Ins': true,
+                      'In_Frame_Del': true,
+                      'Multi_Hit': true
+                    },
+                    icon: 'circle'
+                  },
+                  xAxis: [
+                    {
+                      gridIndex: 0,
+                      type: 'category',
+                      show: true,
+                      position: 'top',
+                      data: topgenes,
+                      splitArea: {
+                        show: true
+                      },
+                      axisLine: {
+                        show: false
+                      },
+                      axisTick: {
+                        show: false
+                      },
+                      splitLine: {
+                        show: true
+                      },
+                      axisLabel: {
+                        interval: 0,
+                        rotate: -90,
+                        fontWeight: 'bold'
+                      }
+                    },
+                    {
+                      gridIndex: 0,
+                      type: 'category',
+                      show: true,
+                      position: 'bottom',
+                      data: topgenes,
+                      splitArea: {
+                        show: true
+                      },
+                      axisLine: {
+                        show: false
+                      },
+                      axisTick: {
+                        show: false
+                      },
+                      splitLine: {
+                        show: true
+                      },
+                      axisLabel: {
+                        interval: 0,
+                        rotate: -90,
+                        fontWeight: 'bold'
+                      },
+                      data: topgenes_rate_p
+                    },
+                    {
+                      gridIndex: 1,
+                      type: 'category',
+                      show: true,
+                      position: 'top',
+                      data: topgenes,
+                      splitArea: {
+                        show: true
+                      },
+                      axisLine: {
+                        show: false
+                      },
+                      axisTick: {
+                        show: false
+                      },
+                      splitLine: {
+                        show: false
+                      },
+                      axisLabel: {
+                        show: false,
+                        interval: 0,
+                        rotate: -90,
+                        fontWeight: 'bold'
+                      }
+                    }
+                  ],
+                  yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    show: true,
+                    min: 0,
+                    max: samples.length,
+                    interval: 1,
+                    splitArea: {
+                        show: true
+                    },
+                    axisLine: {
+                      show: false
+                    },
+                    axisTick: {
+                      show: false
+                    },
+                    axisLabel: {
+                      show: false
+                    },
+                    splitLine: {
+                      show: true
+                    }
+                  },
+                  {
+                    gridIndex: 1,
+                    type: 'value',
+                    show: true,
+                    position: 'right',
+                    min: 0,
+                    max: Math.round(topgene_max),
+                    //interval: 1,
+                    splitArea: {
+                        show: true
+                    },
+                    axisLine: {
+                      show: true
+                    },
+                    axisTick: {
+                      show: true
+                    },
+                    inverse: true
+                  }
+                  ],
+                  /*
+                  dataZoom: [
+                  {
+                    type: 'slider',
+                    yAxisIndex: 0
+                  }
+                  ],*/
+                  series: series
+                };
+                myChart.setOption(option);
+              }//end draw
+              $(document).ready(function(){
+                var infos = {{ infos }};
+                drawAlterInSamples(infos);
+              });
+              </script>
+              {% endautoescape %}
+              <!--
+              <div>
+                <hr />
+                <p class="text-center">参考模板</p>
+                <img src="{% static 'cccga/alter_all_samples.jpg' %}" width="90%" height="90%">
+              </div>-->
+              <hr />
+              <div id="alter-in-samples-2" style="width: 100%; height:1000px;"></div>
+              {% autoescape off %}
+              <script>
+              function draw() {
+                var myChart = echarts.init(document.getElementById('alter-in-samples-2'));
+                var lol_width = 690;
+                var lol_height = 480;
+                var padding = {top: 30, right: 10, bottom: 10, left: 20};
+                var graphic = [];
+                var total_samples = 1015;
+                var gsv = {{ infos.oncoplot.topgenes.gsv }};
+                var samples_num = gsv[0].length;
+                var topgenes = {{ infos.oncoplot.topgenes.name }};
+                var genes_num = topgenes.length;
+                var topgenes_rate = {{ infos.oncoplot.topgenes.sample_number }};
+                var topgenes_rate_p = [];
+                for (i = 0; i < topgenes_rate.length; i++) {
+                  topgenes_rate_p[i] = Math.round(topgenes_rate[i]) + '%'
+                }
+                var topgene_max = {{ infos.oncoplot.topgenes.max }};
+                var gsvfills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru', 'black', '#DCDCDC'];
+                var xoffset = (lol_width - padding.left) / samples_num;
+                var yoffset = lol_height / genes_num;
+                for (let i = 0; i < genes_num; i++) {
+                  for (let j = 0; j < samples_num; j++) {
+                    var colInx = gsv[i][j];
+                    if (colInx === -1) {
+                      colInx = 8;
+                    }
+                    let varclass_graphic = {
+                      id: 'x' + i + 'y' + j + '-rect',
+                      type: 'rect',
+                      scale: [1, 1],
+                      shape: {
+                        x: j * xoffset + padding.left,
+                        y: i * yoffset + i + padding.top,
+                        width: xoffset,
+                        height: yoffset
+                      },
+                      style: {
+                        fill: gsvfills[colInx],
+                        stroke: '#999',
+                        lineWidth: '0.1px'
+                      },
+                      //onmouseover: function () {},
+                      //onmouseout: function () {},
+                      silent: true
+                    };
+                    graphic.push(varclass_graphic);
+                  }
+                  //gene name
+                  let gene_text = {
+                    id: 'gene' + i + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: 690,
+                      y: i * yoffset + i + padding.top + 4,
+                      fill: 'black',
+                      text: topgenes[i],
+                      font: '10px',
+                    },
+                    silent: true
+                  };
+                  graphic.push(gene_text);
+                  //sample rate
+                  let sample_rate_text = {
+                    id: 'sample-rate' + i + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: 0,
+                      y: i * yoffset + i + padding.top + 4,
+                      fill: 'black',
+                      text: topgenes_rate_p[i],
+                      font: '10px',
+                    },
+                    silent: true
+                  };
+                  graphic.push(sample_rate_text);
+                }
+                //legend
+                var graphic_legend_ids = ['missense', 'nonsense', 'splice', 'fsi', 'fsd', 'ifi', 'ifd', 'mh'];
+                var graphic_legend_fills = ['green', 'red', 'orange', 'purple', 'blue', 'pink', 'peru', 'black'];
+                var graphic_legend_texts = ['Missense Mutation', 'Nonsense Mutation', 'Splice Region', 'Frame Shift Ins', 'Frame Shift Del', 'In Frame Ins', 'In Frame Del', 'Multi Hit'];
+                for (let i = 0; i < graphic_legend_ids.length; i++) {
+                  let legend_circle = {
+                    id: graphic_legend_ids[i] + '-circle',
+                    type: 'circle',
+                    scale: [1, 1],
+                    shape: {
+                      cx: padding.left + 10 + (i - (i % 2)) * 75,
+                      cy: 550 + (i % 2) * 20,
+                      r: 3,
+                      r0: 0
+                    },
+                    style: {
+                      fill: graphic_legend_fills[i],
+                      stroke: '#999',
+                    },
+                    silent: true
+                  };
+                  let legend_text = {
+                    id: graphic_legend_ids[i] + '-text',
+                    type: 'text',
+                    scale: [1, 1],
+                    style: {
+                      x: padding.left + 10 + (i - (i % 2)) * 75 + 10,
+                      y: 550 + (i % 2) * 20,
+                      fill: 'black',
+                      text: graphic_legend_texts[i],
+                    },
+                    silent: true
+                  };
+                  graphic.push(legend_circle, legend_text);
+                }
+                //console.log(graphic);
+                var series = [];
+                var topgene_series = [
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Missense_Mutation',
+                  data: {{ infos.oncoplot.topgenes.missense }},
+                  itemStyle: {
+                    color: 'green'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Nonsense_Mutation',
+                  data: {{ infos.oncoplot.topgenes.nonsense }},
+                  itemStyle: {
+                    color: 'red'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Splice_Region',
+                  data: {{ infos.oncoplot.topgenes.splice }},
+                  itemStyle: {
+                    color: 'orange'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Frame_Shift_Ins',
+                  data: {{ infos.oncoplot.topgenes.fsi }},
+                  itemStyle: {
+                    color: 'purple'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'Frame_Shift_Del',
+                  data: {{ infos.oncoplot.topgenes.fsd }},
+                  itemStyle: {
+                    color: 'blue'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'In_Frame_Ins',
+                  data: {{ infos.oncoplot.topgenes.ifi }},
+                  itemStyle: {
+                    color: 'pink'
+                  }
+                },
+                {
+                  type: 'bar',
+                  stack: 'tgs',
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    position: 'top',
+                    formatter: '{a}<br />{b}: {c}'
+                  },
+                  name: 'In_Frame_Del',
+                  data: {{ infos.oncoplot.topgenes.ifd }},
+                  itemStyle: {
+                    color: 'peru'
+                  },
+                  barCategoryGap: '1px',
+                  barWidth: 15
+                }
+                ];
+                for (i = 0; i < topgene_series.length; i++) {
+                  series.push(topgene_series[i]);
+                }
+                //
+                var option = {
+                  graphic: graphic,
+                  grid: [
+                    {bottom: 460, left: 810, top: 30}
+                  ],
+                  title: {
+                    text: 'Altered in ' + samples_num + ' of ' + total_samples + ' samples',
+                    left: 'center'
+                  },
+                  tooltip: {},
+                  xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    position: 'top',
+                    min: 0,
+                    max: Math.round(topgene_max),
+                    interval: Math.round(topgene_max),
+                    axisTick: {
+                      show: true
+                    },
+                    splitLine: {
+                      show: false
+                    }
+                  }
+                  ],
+                  yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    data: topgenes,
+                    inverse: true,
+                    axisTick: {
+                      show: true
+                    },
+                    axisLabel: {
+                      show: false
+                    },
+                    splitLine: {
+                      show: false
+                    }
+                  }
+                  ],
+                  series: series
+                };
+                myChart.setOption(option);
+              }
+              $(document).ready(function(){
+                var infos = {{ infos }};
+                draw();
+              });
+              </script>
+              {% endautoescape %}
+              <!-- alter-in-samples landscape end -->
+          </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The NEW Project{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="keyword" content="Chinese Colorectal Cancer Genome Atlas, CCCGA">
+    <meta name="author" content="">
+    <link rel="icon" href="https://www.haplox.cn/favicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.7-dist/css/bootstrap.min.css') }}">
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='cccga/base.css') }}" rel="stylesheet">
+    <style type="text/css">
+      body {
+        min-height: 1000px;
+        padding-top: 0px;
+      }
+      .log-header {
+        border-left: 0px solid #FF6100;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        margin-top: 0px;
+        background-color: #eee;
+        font-size: 40px;
+        font-weight: bold;
+        text-align: center;
+        color: black;
+      }
+      .navbar {
+        min-height: 30px;
+        margin-bottom: 10px;
+        background-color: #053df7; /*#3aa5c8;#3433e3;#053df7;*/
+        /*border-color: #3433e3;*/
+        border-style: none;
+        border-radius: 0px 0px 4px 4px;
+      }
+      .navbar-nav {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+      .navbar-default .navbar-nav > li > a {
+        color: #fff;
+        margin-right: 20px;
+        background-color: #053df7; /*#3aa5c8;#3433e3;*/
+      }
+      .navbar-header {
+        background-color: #053df7; /*#3aa5c8;#3433e3;*/
+        min-height: 30px;
+      }
+      .navbar-toggle {
+        padding: 5px 10px;
+        margin-top: 0px;
+        margin-right: 15px;
+        margin-bottom: 0px;
+      }
+      .navbar-default .navbar-toggle {
+        border-color: #3aa5c8;
+      }
+      .navbar-default .navbar-toggle:hover,
+      .navbar-default .navbar-toggle:focus {
+        background-color: #053df7; /*#3aa5c8;#3433e3;*/
+      }
+      .navbar-default .navbar-toggle .icon-bar {
+        background-color: #fff;
+      }
+    </style>
+    <script>
+      function selectLanguage(obj) {
+          str="/i18n/setlang/";
+          myform = document.getElementById('setLanguage');
+          myform.method = "POST";
+          myform.action = str;
+          myform.submit();
+      }
+    </script>
+    {% block extrastyle %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <div>
+            <img src="{{ url_for('static', filename='cccga/the_ck_proj.jpg') }}">
+          </div>
+        </div>
+      </div>
+
+      {% block navbar %}
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#target-menu" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="target-menu" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="{% block index_active %}{% endblock %}">
+                <a href="{{ url_for('home') }}"><span class="glyphicon glyphicon-home"></span> <b> {% trans %}Home{% endtrans %}</b></a>
+            </li>
+            <li class="{% block workflow_active %}{% endblock %}">
+                <!-- <a href="{{ url_for('analysis_workflow') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Analysis Workflow{% endtrans %}</b></a> -->
+                <a href="{{ url_for('test') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Analysis Workflow{% endtrans %}</b></a>
+            </li>
+            <li class="{% block MR_ana %}{% endblock %}">
+              <a href="{{ url_for('MR_ana') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}MR analysis{% endtrans %}</b></a>
+          </li>
+            <li class="{% block Browse %}{% endblock %}">
+              <a href="{{ url_for('browse') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Browse{% endtrans %}</b></a>
+          </li>
+          </ul>
+        </div>
+        </div>
+      </nav>
+      </div>
+      {% endblock %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <br />
+          <footer>
+            <div class="gray-line"></div>
+            <div class="white-line"></div>
+            <div class="foot">
+              <div class="foot-text">
+                <form name="setLanguage" id="setLanguage" method='post'>
+                  
+                    <span style="color:white;">
+                      Copyright &copy;  {% trans %}All Rights Reserved{% endtrans %}.
+                    </span>
+                    <br />
+                    <script>
+                      var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+                      document.write(unescape("%3Cspan id='cnzz_stat_icon_1280940671'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1280940671%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+                    </script>
+                    <!-- <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备14082947号</a> -->
+                </form>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+</html>

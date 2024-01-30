@@ -1,0 +1,69 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Search</title>
+</head>
+<body>
+    <form method="POST" action="/search">
+        <input type="text" name="search" placeholder="Sample number">
+        <input type="submit" value="Search">
+    </form>
+    {{ table|safe }}
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Table</title>
+    <style>
+        .scrollable {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <form method="POST">
+        <label for="sample">Sample:</label>
+        <input type="text" id="sample" name="sample">
+        <label for="rows_per_page">Rows per page:</label>
+        <select id="rows_per_page" name="rows_per_page" onchange="changeFunction(this)">
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+        <script>
+            function changeFunction(selectObject) {
+                var value = selectObject.value;  
+                // 你的代码在这里，value变量是你选择的选项的值
+                console.log('你选择了: ' + value);
+            }
+            </script>
+        <input type="submit" value="Search">
+    </form>
+    <div class="scrollable">
+        <table>
+            <thead>
+                <tr>
+                    {% for col in columns %}
+                        <th>{{col}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                    <tr>
+                        {% for cell in row %}
+                            <td>{{cell}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <a href="?page={{ page-1 if page > 1 else 1 }}">Previous</a>
+        <a href="?page=2">2</a>
+        <a href="?page={{ page+1 if page < total_pages else total_pages }}">Next</a>
+    </div>
+</body>
+</html>

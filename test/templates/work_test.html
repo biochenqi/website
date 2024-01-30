@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block extrastyle %}
+<style type="text/css">
+.panel-heading > font {
+    size:120%;
+    font-weight:bold;
+    color:black
+}
+.list-group-item-highlight {
+    cursor: pointer;
+    background-color: #E0E0E0
+}
+.list-group-item-highlight-click {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
+</style>
+<script>
+// 固定位置
+$(document).ready(function(){
+    $("#myNav").affix({
+        offset: { 
+            top: -100
+      }
+    });
+});
+// 手型+背景色
+$(document).ready(function(){
+    $("ul.list-group>.list-group-item").bind("mouseover", function(){
+        $(this).addClass('list-group-item-highlight');
+    }).bind('mouseout', function(){
+        $(this).removeClass('list-group-item-highlight');
+    })
+});
+// 点击+显示特定内容
+$(document).ready(function(){
+    $("ul.list-group>.list-group-item").bind("click", function(){
+        $(this).siblings().removeClass('list-group-item-highlight-click');
+        $(this).addClass('list-group-item-highlight-click');
+        var $header = $(this).text();
+        $('.content>.panel').hide();
+        $('.content .panel-heading')
+        .filter(":contains(" + $header + ")")
+        .closest('.panel').show();
+    })
+})
+</script>
+{% endblock %}
+
+{% block workflow_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    	<div class="col-xs-3">
+            <div class="tag">
+    		    <div class="panel panel-info">
+                    <div class="panel-heading">
+                	    <font>&nbsp;{% trans %}Analysis Workflow{% endtrans %}</font>
+                    </div>
+                    <ul class="list-group">
+					    <li class="list-group-item">{% trans %}Quality Check and Raw Data Conversion{% endtrans %}</li>
+				    	<li class="list-group-item">{% trans %}Alignment{% endtrans %}</li>
+				    	<li class="list-group-item">{% trans %}Mutation Calling{% endtrans %}</li>
+				    	<li class="list-group-item">{% trans %}Annotation and Filtering Strategies{% endtrans %}</li>
+                        <li class="list-group-item">{% trans %}CNV Calling and GISTIC Analysis{% endtrans %}</li>
+                        <li class="list-group-item">{% trans %}Signature Identification and Decomposition{% endtrans %}</li>
+			        </ul>
+                </div>
+            </div>
+            <div style="height: 600px"></div>
+    	</div>
+    	<div class="col-xs-9">
+            <div class="content">
+    		<div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}Quality Check and Raw Data Conversion{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}Raw Sequencing Data were preprocessed by{% endtrans %}&nbsp;<a href="https://github.com/OpenGene/fastp"><strong>fastp</strong></a> v0.12.6(Chen, Shifu et al., 2018){% trans %} for subsequent analysis:{% endtrans %}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) {% trans %}adapter trimming{% endtrans %}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) {% trans %}remove the reads in which the N base has reached a certain percentage{% endtrans %} ({% trans %}default length of{% endtrans %} 5 bp)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) {% trans %}remove the reads which contain low quality bases{% endtrans %} ({% trans %}default quality threshold value{% endtrans %} <= 20) {% trans %}above a certain portion{% endtrans %} ({% trans %}default{% endtrans %} 40%)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) {% trans %}sliding window trimming: the bases in the sliding window{% endtrans %} ({% trans %}default is{% endtrans %} 4bp) {% trans %}with mean quality below cutting quality{% endtrans %} ({% trans %}default is{% endtrans %} 20) {% trans %}will be cut{% endtrans %}</p>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}Alignment{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}The sequenced reads were aligned to the reference human genome (build hg19) using sentieon bwa-mem. Subsequent processing including sorting read and marking duplicates were performed using sentieon tools v201808 (https://www.sentieon.com/ ), which were improved upon the GATK Toolkit (https://gatk.broadinstitute.org/hc/en-us). Sequence depth and coverage were obtained using bamdst (https://github.com/shiquan/bamdst).{% endtrans %}</p>
+                    <!--
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;有效测序数据通过sentieon bwa-mem（<a href="https://www.sentieon.com/">https://www.sentieon.com/</a>）比对到参考基因组（hg19），得到最初的BAM格式比对结果。使用sentieon（v201808）工具对BAM文件进行排序、创建索引、过滤重复reads等处理，得到BAM格式的最终比对结果，并使用bamdst（<a href="https://github.com/shiquan/bamdst">https://github.com/shiquan/bamdst</a>）统计测序深度和覆盖度。</p>-->
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}Mutation Calling{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}To identify all the variants, we used three somatic mutation callers for single nucleotide variants (SNVs) and indels{% endtrans %}:</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) VarScan2 (v2.3.8): -min-coverage 10 -min-var-freq 0.05 -min-freq-for-hom 0.75 -p-value 0.99 -somatic-p-value 0.05.(Koboldt et al., 2012)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) Mutect2: gatk mutect2 -R -pon -germline-resource -af-of-alleles-not-in-resource 0.0000025 -L -disable-read-filter.(Cibulskis, Kristian et al., 2013)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) TNscope: sentieon driver -t -algo TNscope -dbsnp -pon -cosmic</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}To improve specificity, a panel of normal (PON) samples filtration was used to removed background germline variations and artifacts. Mutect2 and TNscope are based on bam files which processed by quality score recalibration that performed using GATK4 (v 4.1.1.0) (McKenna et al., 2010).{% endtrans %}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}Specifically, processSomatic and somaticFilter{% endtrans %}: -min-coverage 10, -min-reads2 2, -min-strands2 1, -min-avg-qual 20, -p-value 0.05, {% trans %}were used to extract high-confidence somatic variants from the raw VarScan2 results and to remove clusters of false positives and SNVs near indels. Additional filtration with fpfilter.pl script from Varscan2 was performed tumor read counts generated by bam-readcount(https://github.com/genome/bam-readcount) was performed to reduce false positive calls. We discarded SNVs in RepeatMasker repeat regions(http://www.repeatmasker.org).{% endtrans %}</p>
+                    <!--
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;对于成对的肿瘤、对照样本，使用三种体细胞突变检测软件分析单核苷酸变异（<strong>SNV</strong>）、插入和缺失（<strong>INDEL</strong>）。软件及参数如下：</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（1）<strong>VarScan2</strong>（v2.3.8）（-min-coverage 10 -min-var-freq 0.05 -min-freq-for-hom 0.75 -p-value 0.99 -somatic-p-value 0.05）（Koboldt et al., 2012）；</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（2）<strong>Mutect2</strong>（gatk mutect2 -R -pon -germline-resource -af-of-alleles-not-in-resource 0.0000025 -L -disable-read-filter）（Cibulskis, Kristian et al., 2013）；</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（3）<strong>TNscope</strong>（sentieon driver -t -algo TNscope -dbsnp -pon -cosmic）。</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Mutect2</strong>、<strong>TNscope</strong>使用经<strong>GATK4</strong>（v4.1.1.0）（McKenna et al., 2010）质量校正（Base Quality Score Recalibration，BQSR）的比对BAM文件作为输入。为了提高检测结果的准确性，构建了一组正常样本库（Panel of Normal，PON）用于过滤背景胚系突变及假阳性突变。</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;使用<strong>processSomatic</strong>和<strong>somaticFilter</strong>（-min-coverage 10 -min-reads2 2 -min-strands2 1 -min-avg-qual 20 -p-value 0.05）提取VarScan2结果中高可信度的体细胞突变，且过滤位于INDELs附近的假阳性SNVs。此外还使用Varscan2 中的<strong>fpfilter.pl</strong>对肿瘤样本的reads支持数进行过滤，并过滤位于<strong>RepeatMasker</strong>（<a href="http://www.repeatmasker.org">http://www.repeatmasker.org</a>）<strong>注释重复区域的SNVs。</strong></p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>最终保留至少两个软件检测到的体细胞突变，且需满足一下条件：</strong></p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（1）突变等位基因频率（VAF）>=8%；</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（2）测序深度>=8；</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;（3）突变碱基reads支持数>=2。</p>-->
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}Annotation and Filtering Strategies{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}Somatic mutations were then annotated using VEP(McLaren et al., 2016). To obtain reliable mutation calls, we used a two-step approach.{% endtrans %}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}First, chose mutations that were identified in at least two out of the three callers (Mutect2, TNscope and VarScan2){% endtrans %}.</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}Second, additional filtering with three criteria was performed{% endtrans %}:</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) {% trans %}variant allele frequency{% endtrans %} (VAF) >=8%</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) {% trans %}sequencing depth in the region{% endtrans %} >=8</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) {% trans %}sequence reads in support of the variant call{% endtrans %} >= 2</p>
+                    <!--
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;利用<strong>ANNOVAR</strong>（v2018-04-16）（Wang et al., 2010）软件对变异位点进行注释，包括变异位点的基因结构注释、已知变异数据库注释、有害性预测，包含的数据库包括dbSNP、千人基因组SNP、Ljb26_all、avsnp150、refGene、genomic SuperDups、esp6500siv2_all以COSMIC已知肿瘤体细胞突变数据库等。</p>-->
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}CNV Calling and GISTIC Analysis{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}CNV analusis was done using EXCAVATOR2 v1.1.2(D'Aurizio, R et al., 2016). EXCAVATOR2 is a collection of bash, R and Fortran scripts and codes that analyses WES data to identify CNVs. It extends the Read Count approach to the whole genome sequence and exploits the Shifting Level Model (SLM) algorithm to segment the two combined profiles.{% endtrans %}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{% trans %}To study significantly recurrent regions of SCNA, we applied GISTIC2 v2.0.23(Mermel et al., 2011) applied to the copy number segments. GISTIC2 was run with the following parameters{% endtrans %}: -ta 0.3 -td 0.3 -armpeel 1 -cap 1.5 -conf 0.99 -genegistic 1 -gcm mean -js 4 -maxseg 2000 -qvt 0.05 -savegene 1 -brlen 0.98 -broad 0 -rx 0.</p>
+                    <!--
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;使用<strong>EXCAVATOR2</strong>（v1.1.2） (D'Aurizio, R et al., 2016）分析样本基因组大片段序列的拷贝数变异（<strong>Copy number variation，CNV</strong>），分为缺失（Deletion）和重复（Duplication）两种类型。基于样本的体细胞拷贝数变异（<strong>somatic copy number alterations，SCNA</strong>）及体细胞突变等位基因深度信息，使用R包ABSOLUTE （v1.0.6）（Carter, S. L et al., 2012）评估肿瘤样本的纯度与倍性。</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;为进一步研究样本显著扩增或缺失的基因组区域，使用<strong>GISTIC2</strong>（v2.0.23）（Mermel et al., 2011）分析队列的高频SCNA，参数为： -ta 0.3 -td 0.3 -armpeel 1 -cap 1.5 -conf 0.99 -genegistic 1 -gcm mean -js 4 -maxseg 2000 -qvt 0.05 -savegene 1 -brlen 0.98 -broad 0 -rx 0。</p>-->
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading"><font>{% trans %}Signature Identification and Decomposition{% endtrans %}</font></div>
+                <div class="panel-body">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;Mutational signatures were identified using R package LassoSig from the CRC samples (only samples with at least 20 SNVs were included). The normalization method was set to ‘exome2genome’. This approach organized sample information in the form of the fraction of mutations in each of 96 trinucleotides and determined the weighted combination of the COSMIC signatures (<a href="https://cancer.sanger.ac.uk/cosmic/signatures" target="_blank" title="COSMIC signatures">https://cancer.sanger.ac.uk/cosmic/signatures</a>) that most closely reconstructed the mutational profile.</p>
+                    <!--
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;通过R包<strong>maftools</strong>（Mayakonda A et al., 2018）分析肿瘤样本不同碱基转换类型（如C>A/G>T）的数量及比例。</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;结合点突变上、下游各1bp位置的碱基，将点突变分成96种，根据各肿瘤样本中96种点突变的数量，利用R包<strong>deConstructSigs</strong>（Rosenthal et al., 2016）提取体细胞SNV的突变特征。再将突变特征与<strong>COSMIC</strong>（<a href="https://cancer.sanger.ac.uk/cosmic/signatures">https://cancer.sanger.ac.uk/cosmic/signatures</a>） （Alexandrov, L. B et al,. 2013）30多种突变特征进行比较，分析与已知突变特征的余弦相似度。</p>-->
+                </div>
+            </div>
+            </div>
+    	</div>
+    </div>
+</div>
+{% endblock %}

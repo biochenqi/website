@@ -1,0 +1,131 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+</style>
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#cnv').DataTable({
+        	"scrollY": 250,
+            "scrollX": true,
+            searching: false,
+            "ordering": false,
+            "aLengthMenu" : [10, 20, 50, 100], //更改显示记录数选项
+            "iDisplayLength" : 20, //默认显示的记录数
+        });
+    } );
+</script>
+<script src="{% static 'js/d3.v3.min.js' %}" charset="utf-8"></script>
+
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    	<div class="col-xs-3">
+    		<div class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;Variation</h3>
+                </div>
+				<a href="{% url 'cccga:variation' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;ALL</strong></a>
+                <a href="{% url 'cccga:snv' %}" class="list-group-item"><strong>&nbsp;Somatic SNV</strong></a>
+                <a href="{% url 'cccga:cnv' %}" class="list-group-item active"><strong>&nbsp;Somatic CNV</strong></a>
+                <a href="{% url 'cccga:query_sample' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Samples</strong></a>
+                <a href="{% url 'cccga:query_gene' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Gene</strong></a>
+            </div>
+    	</div>
+    	<div class="col-xs-9">
+    		<div class="row">
+    			<div class="row searchbg">
+                    <div class="col-sm-1">
+                       <!-- <span class="tt pull-right"><font color="#696969">CPGEA</font> &nbsp;&nbsp;</span>-->
+                    </div>
+                    <div class="col-sm-2 mtop13">
+                        <select class="form-control height36 new-form-control1" name="query_type" id="query_type">
+                            <option value="op_gene">&nbsp;&nbsp;Gene</option>
+                            <option value="op_sample">&nbsp;&nbsp;Sample</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 mtop13">
+                        <input type="text" class="form-control height36 new-form-control1" name="valuex" id="valuex">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" name="submit" class="btn btn-green button_query" style="background-color:#C0C0C0">Search</button>
+                    </div>
+                </div>
+    		</div>
+    		<hr>
+    		<!--<div class="row">
+                <div id="containerx"></div>
+            </div>
+            <hr>-->
+            <div class="row">
+                <div class="col-md-1"></div>
+                <table>                                 
+                    <tr>
+                        <td><font style="color:#473C8B;font-size:110%;font-weight:600;"> Amplification Frequency: &nbsp;&nbsp;0.00%</font></td>
+                    </tr>
+                    <tr>
+                        <td><font style="color:#473C8B;font-size:110%;font-weight:600;"> Deletion Frequency: &nbsp;&nbsp; 0.00%</font></td>
+                    </tr>
+                </table>
+            </div>
+    		<hr>
+    		{# table content #}
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+                        <thead>
+                            <tr style="background-color: #eee">
+                                <th>Hugo_Symbol</th>
+                                <th>Entrez_Gene_Id</th>
+                                <th>Tumor_Sample_Barcode</th>
+                                <th>CNV_Type</th>
+                                <th>Chromosome</th>
+                                <th>Start_position</th>
+                                <th>End_Position</th>
+                                <th>cytoBand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for snv in snvs %}
+                            <tr>
+                                <td>{{ snv.symbol }}</td>
+                                <td>{{ snv.gene_id }}</td>
+                                <td>{{ snv.tumor_sampleid }}</td>
+                                <td>{{ snv.aachange }}</td>
+                                <td>{{ snv.vari_type }}</td>
+                                <td>{{ snv.chromos }}</td>
+                                <td>{{ snv.spo }}</td>
+                                <td>{{ snv.epo }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+    	</div>
+    </div>
+</div>
+<script>
+var x_list = [0,393];
+var assign_width = 700;
+var assign_height = 160;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+var svg = d3.select("#containerx")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+</script>
+{% endblock %}

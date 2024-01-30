@@ -1,0 +1,127 @@
+{% extends "base_variation.html" %}
+
+{% block content_detail %}
+<div class="panel panel-info">
+    <div class="panel-body">
+      <div id='variants-overview' style="width: 100%; height: 600px">
+    </div>
+    {% autoescape off %}
+      <script>
+        var forward_name = {{ forward_names|tojson|safe }};
+        var reverse_name = {{ reverse_names|tojson|safe }};
+        var forward_val = {{ forward_vals|tojson|safe }};
+        var reverse_val = {{ reverse_vals|tojson|safe }};
+        var myChart = echarts.init(document.getElementById('variants-overview'));
+              var option = {
+                grid: [
+                  {right: '15%', bottom: '55%', left: '15%'},
+                  // {left: '60%', bottom: '55%', right: '5%'}
+                ],
+                title: {
+                  text: '{% trans %}MR analysis results Overview{% endtrans %} ',
+                  left: 'center'
+                },
+                tooltip: {
+                  formatter: '{b}<br />{a}: {c}%'
+                },
+                xAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'value',
+                    name: 'Forward',
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 15,
+                    },
+                    nameGap: 30
+                  },
+                  // {
+                  //   gridIndex: 1,
+                  //   type: 'value',
+                  //   name: 'Reverse',
+                  //   nameLocation: 'center',
+                  //   nameTextStyle: {
+                  //     fontWeight: 'bold',
+                  //     fontSize: 15,
+                  //   },
+                  //   nameGap: 30
+                  // },
+                ],
+                yAxis: [
+                  {
+                    gridIndex: 0,
+                    type: 'category',
+                    axisLabel: {
+                      fontSize: 12,
+                      fontWeight: 'normal'
+                    },
+                    axisPointer: {
+                      type: 'shadow'
+                    },
+                    data: forward_name
+                  },
+                  // {
+                  //   gridIndex: 1,
+                  //   type: 'category',
+                  //   axisLabel: {
+                  //     fontSize: 12,
+                  //     fontWeight: 'normal'
+                  //   },
+                  //   axisPointer: {
+                  //     type: 'shadow'
+                  //   },
+                  //   data: reverse_name
+                  // },
+                ],
+                series: [
+                {
+                  name: 'The num IDP of Disease ',
+                  type: 'bar',
+                  data: forward_val,
+                  label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}'
+                  },
+                  itemStyle: {
+                    color: function(params){
+                      var colorlist = ['peru', 'pink', 'blue', 'purple', 'orange', 'red', 'green','SkyBlue', 'Gold', 'Thistle'];
+                      return colorlist[params.dataIndex];
+                    }
+                  },
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  tooltip: {
+                    formatter: '{a}<br />{b}: {c}'
+                  }
+                },
+                // {
+                //   name: 'Variant Type',
+                //   type: 'bar',
+                //   data: reverse_val,
+                //   label: {
+                //     show: true,
+                //     position: 'right',
+                //     formatter: '{c}'
+                //   },
+                //   itemStyle: {
+                //     color: function(params){
+                //       var colorlist = ['peru', 'pink', 'blue', 'purple', 'orange', 'red', 'green','SkyBlue', 'Gold', 'Thistle'];
+                //       return colorlist[params.dataIndex];
+                //     }
+                //   },
+                //   xAxisIndex: 1,
+                //   yAxisIndex: 1,
+                //   tooltip: {
+                //     formatter: '{a}<br />{b}: {c}'
+                //   }
+                // },
+            ]
+              }
+        myChart.setOption(option);
+      </script>
+    {% endautoescape %}
+    </div>
+</div>
+{% endblock %}

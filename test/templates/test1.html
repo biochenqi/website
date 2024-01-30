@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#cnv').DataTable({
+        	"scrollY": 500,
+            "scrollX": true,
+            searching: false,
+            "ordering": true,
+            "aLengthMenu" : [10, 20, 50, 100], //更改显示记录数选项
+            "iDisplayLength" : 20, //默认显示的记录数
+        });
+    } );
+</script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+
+{% endblock %}
+
+{% block workflow_active %}active{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    	<div class="col-xs-3">
+    		<div class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;Variation</h3>
+                </div>
+				<a href="{{ url_for('index', text='IVM') }}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;IVM</strong></a>
+				<a href="{{ url_for('index', text='MR_Egger') }}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;MR Egger</strong></a>
+                
+            </div>
+    	</div>
+    	<div class="col-xs-9">
+    		<div class="row">
+    			<div class="row searchbg">
+                    <div class="col-sm-1">
+                       <!-- <span class="tt pull-right"><font color="#696969">CPGEA</font> &nbsp;&nbsp;</span>-->
+                    </div>
+                    <form method="POST">
+                    <div class="col-sm-2 mtop13">
+                        <select class="form-control height36 new-form-control1" name="query_type" id="query_type">
+                            <option value="outcome">&nbsp;&nbsp;outcome</option>
+                            <option value="Sample">&nbsp;&nbsp;Sample</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 mtop13">
+                        <input type="text" class="form-control height36 new-form-control1" name="valuex" id="valuex">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" name="submit" class="btn btn-green button_query" style="background-color:#C0C0C0">Search</button>
+                    </div>
+                </form>
+                </div>
+    		</div>
+    		<!-- <hr> -->
+    		<!--<div class="row">
+                <div id="containerx"></div>
+            </div>
+            <hr>-->
+            <!-- <div class="row">
+                <div class="col-md-1"></div>
+                <table>                                 
+                    <tr>
+                        <td><font style="color:#473C8B;font-size:110%;font-weight:600;"> Amplification Frequency: &nbsp;&nbsp;0.00%</font></td>
+                    </tr>
+                    <tr>
+                        <td><font style="color:#473C8B;font-size:110%;font-weight:600;"> Deletion Frequency: &nbsp;&nbsp; 0.00%</font></td>
+                    </tr>
+                </table>
+            </div> -->
+    		<hr>
+    		{# table content #}
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+                        <thead>
+                            <tr>
+                                {% for key in data[0].keys() %}
+                                <th>{{ key }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+    	</div>
+    </div>
+</div>
+<script>
+var x_list = [0,393];
+var assign_width = 700;
+var assign_height = 160;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+var svg = d3.select("#containerx")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+</script>
+{% endblock %}

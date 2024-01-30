@@ -1,0 +1,344 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<!-- 引入 ECharts 文件 -->
+<!-- <script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script> -->
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/d3.v3.min.js' %}" charset="utf-8"></script>
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    {# sidebar #}
+    <div class="col-xs-3">
+    	<div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;Variation</h3>
+        </div>
+          <a href="{% url 'cccga:variation' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;ALL</strong></a>
+          <a href="{% url 'cccga:category' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-paperclip"></span> &nbsp;Category</strong></a>
+          <a href="{% url 'cccga:query_sample' %}" class="list-group-item active"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Samples</strong></a>
+          <a href="{% url 'cccga:query_gene' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Gene</strong></a>
+      </div>
+      <div style="height: 600px"></div>
+    </div>
+    {# search form #}
+    <div class="col-xs-9">
+    	<div style="padding-left: 120px;padding-right: 120px;padding-top: 10px;">
+        <form method="post" action="{% url 'cccga:query_sample' %}" enctype="multipart/form-data" class="bs-example bs-example-form" role="form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <input type="text" class="form-control" name="query_content" value="{{ infos.tsampleid|default:'' }}">
+                  <span class="input-group-btn">
+                    <button class="btn btn-info" type="submit">Go!</button>
+                  </span>
+              </div>
+            </div>
+          </div>
+        </form>
+        <p class="text-left" style="margin-top: 5px;"><small>Please enter the sample barcode, such as: CRC666_T1</small></p>
+      </div>
+      <hr>
+      {# error message #}
+      {% if err_msgs %}
+      <div class="row">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-10">
+          <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h3 class="text-center">Warning</h3>
+            {% for err_msg in err_msgs %}
+            <p class="text-center">{{ err_msg }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if infos %}
+      <div class="row">
+        <div class="panel panel-info">
+          <div class="panel-body">
+              <div id='samples-variations' style="width: 100%; height: 800px"></div>
+              {% autoescape off %}
+              <script>
+                var myChart = echarts.init(document.getElementById('samples-variations'));
+                var option = {
+                  grid: [
+                    {right: '50%', bottom: '55%', left: '15%'},
+                    {left: '60%', bottom: '55%', right: '5%'},
+                    {right: '50%', top: '55%', left: '15%'},
+                    {left: '60%', top: '55%', right: '5%'}
+                  ],
+                  title: {
+                    text: '{{ infos.tsampleid }} Variants Overview',
+                    left: 'center'
+                  },
+                  tooltip: {},
+                  xAxis: [
+                    {
+                      gridIndex: 0,
+                      type: 'value',
+                      name: 'Variation Classification',
+                      nameLocation: 'center',
+                      nameTextStyle: {
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                      nameGap: 30,
+                      /*
+                      splitNumber: 10,
+                      axisTick: {
+                        alignWithLabel: true,
+                        interval: 0,
+                      },
+                      axisLabel: {
+                        interval: 0,
+                        rotate: -30,
+                      },
+                      data: ['Missense_Mutation', 'Nonsense_Mutation', 'Splice_Region', 'Frame_Shift_Ins', 'Frame_Shift_Del', 'In_Frame_Ins', 'In_Frame_Del']
+                      */
+                    },
+                    {
+                      gridIndex: 1,
+                      type: 'value',
+                      name: 'Variant Type',
+                      nameLocation: 'center',
+                      nameTextStyle: {
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                      nameGap: 30,
+                      /*
+                      splitNumber: 10,
+                      axisTick: {
+                        alignWithLabel: true,
+                        interval: 0,
+                      },
+                      data: ['SNP', 'INS', 'DEL']
+                      */
+                    },
+                    {
+                      gridIndex: 2,
+                      type: 'value',
+                      name: 'Snv Class',
+                      nameLocation: 'center',
+                      nameTextStyle: {
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                      nameGap: 30,
+                      /*
+                      splitNumber: 10,
+                      axisTick: {
+                        alignWithLabel: true,
+                        interval: 0,
+                      },
+                      data: {{ infos.snvclass_all.name }}
+                      */
+                    },
+                    {
+                      gridIndex: 3,
+                      type: 'value',
+                      name: 'Top 10 Mutated Genes in {{ infos.tsampleid }}',
+                      nameLocation: 'center',
+                      nameTextStyle: {
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                      nameGap: 30,
+                      /*
+                      splitNumber: 10,
+                      axisTick: {
+                        alignWithLabel: true,
+                        interval: 0,
+                      },
+                      axisLabel: {
+                        interval: 0,
+                        rotate: -30,
+                      },
+                      data: ['Missense', 'Mutation', 'Nonsense', 'Mutation', 'Splice', 'Region', 'Frame', 'Shift', 'Ins', 'Frame']
+                      */
+                    }
+                  ],
+                  yAxis: [
+                    {
+                      gridIndex: 0,
+                      type: 'category',
+                      axisLabel: {
+                        fontSize: 12,
+                        fontWeight: 'normal'
+                      },
+                      data: {{ infos.varclass.name }}
+                    },
+                    {
+                      gridIndex: 1,
+                      type: 'category',
+                      axisLabel: {
+                        fontSize: 12,
+                        fontWeight: 'normal'
+                      },
+                      data: {{ infos.vartype.name }}
+                    },
+                    {
+                      gridIndex: 2,
+                      type: 'category',
+                      axisLabel: {
+                        fontSize: 12,
+                        fontWeight: 'normal'
+                      },
+                      data: {{ infos.snvclass.name }}
+                    },
+                    {
+                      gridIndex: 3,
+                      type: 'category',
+                      axisLabel: {
+                        fontSize: 12,
+                        fontWeight: 'normal'
+                      },
+                      data: {{ infos.topgenes.name }}
+                    }
+                  ],
+                  series: [
+                  {
+                    name: 'Variation Classification',
+                    type: 'bar',
+                    data: {{ infos.varclass.value }},
+                    itemStyle: {
+                      color: function(params){
+                        var colorlist = ['peru', 'pink', 'blue', 'purple', 'orange', 'red', 'green'];
+                        return colorlist[params.dataIndex];
+                      }
+                    },
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                  },
+                  {
+                    name: 'Variant Type',
+                    type: 'bar',
+                    data: {{ infos.vartype.value }},
+                    itemStyle: {
+                      color: function(params){
+                        var colorlist = ['SkyBlue', 'Gold', 'Thistle'];
+                        return colorlist[params.dataIndex];
+                      }
+                    },
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                  },
+                  {
+                    name: 'Snv Class',
+                    type: 'bar',
+                    data: {{ infos.snvclass.value }},
+                    itemStyle: {
+                      color: function(params){
+                        var colorlist = ['RoyalBlue', 'SlateGray', 'SaddleBrown', 'ForestGreen', 'GoldenRod', 'VioletRed'];
+                        return colorlist[params.dataIndex];
+                      }
+                    },
+                    xAxisIndex: 2,
+                    yAxisIndex: 2,
+                  },
+                  /*
+                  {
+                    type: 'bar',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    data: {{ infos.topgenes.af }}
+                  }
+                  */
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'Missense_Mutation',
+                    data: {{ infos.topgenes.missense }},
+                    itemStyle: {
+                      color: 'green'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'Nonsense_Mutation',
+                    data: {{ infos.topgenes.nonsense }},
+                    itemStyle: {
+                      color: 'red'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'Splice_Region',
+                    data: {{ infos.topgenes.splice }},
+                    itemStyle: {
+                      color: 'orange'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'Frame_Shift_Ins',
+                    data: {{ infos.topgenes.fsi }},
+                    itemStyle: {
+                      color: 'purple'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'Frame_Shift_Del',
+                    data: {{ infos.topgenes.fsd }},
+                    itemStyle: {
+                      color: 'blue'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'In_Frame_Ins',
+                    data: {{ infos.topgenes.ifi }},
+                    itemStyle: {
+                      color: 'pink'
+                    }
+                  },
+                  {
+                    type: 'bar',
+                    stack: 'vps',
+                    xAxisIndex: 3,
+                    yAxisIndex: 3,
+                    name: 'In_Frame_Del',
+                    data: {{ infos.topgenes.ifd }},
+                    itemStyle: {
+                      color: 'peru'
+                    }
+                  }
+                  ]
+                };
+                myChart.setOption(option);
+              </script>
+              {% endautoescape %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div><!-- col-xs-9 -->
+  </div><!-- row -->
+</div><!-- container -->
+{% endblock %}

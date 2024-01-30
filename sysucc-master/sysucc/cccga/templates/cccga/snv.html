@@ -1,0 +1,373 @@
+{% extends "cccga/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{% if snvs %}
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+  /* width: 1900px; */
+  /* margin: 0 auto; */
+}
+</style>
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+  $('#snv').DataTable({
+    "scrollY": 250,
+    "scrollX": true,
+    searching: false,
+    "ordering": false,
+    "aLengthMenu" : [10, 20, 50, 100], {# 更改显示记录数选项 #}
+    "iDisplayLength" : 20, {# 默认显示的记录数 #}
+  });
+});
+</script>
+{% endif %}
+<script src="{% static 'js/d3.v3.min.js' %}" charset="utf-8"></script>
+{% endblock %}
+
+{% block variation_active %}active{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    {# sidebar #}
+    <div class="col-xs-3">
+    	<div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">&nbsp;<span class="glyphicon glyphicon-eye-open"></span> &nbsp;Variation</h3>
+        </div>
+          <a href="{% url 'cccga:variation' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp;ALL</strong></a>
+          <a href="{% url 'cccga:snv' %}" class="list-group-item active"><strong>&nbsp;Somatic SNV</strong></a>
+          <a href="{% url 'cccga:cnv' %}" class="list-group-item"><strong>&nbsp;Somatic CNV</strong></a>
+          <a href="{% url 'cccga:query_sample' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Samples</strong></a>
+          <a href="{% url 'cccga:query_gene' %}" class="list-group-item"><strong>&nbsp;<span class="glyphicon glyphicon-search"></span> &nbsp;Search Gene</strong></a>
+      </div>
+    </div>
+    {# search form #}
+    <div class="col-xs-9">
+      {% comment %}
+      <!--<div class="row">
+        <div class="form-wrapper">
+        <form method="post" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="col-sm-1"></div>
+          <div class="col-sm-2">
+            <div class="fieldWrapper">
+            {{ form.query_type }}
+            </div>
+          </div>
+          <div class="col-sm-6">
+            {{ form.query_content }}
+          </div>
+          <div class="col-sm-3">
+            <div class="button-wrapper submit">
+            <input type="submit" value="Submit" />
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+      <hr>-->
+      {% endcomment %}
+    	<div class="row">
+      <form method="post" action="{% url 'cccga:snv' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-sm-1"></div>
+        <div class="col-sm-2">
+          <select class="form-control new-form-control1" name="query_type" id="query_type">
+            <option value="opt_gene">&nbsp;&nbsp;Gene</option>
+            {% if is_sample %}
+            <option value="opt_sample" selected>&nbsp;&nbsp;Sample</option>
+            {% else %}
+            <option value="opt_sample">&nbsp;&nbsp;Sample</option>
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <input type="text" class="form-control new-form-control1" name="query_content" id="query_content">
+        </div>
+        <div class="col-sm-3">
+          <button type="submit" name="submit" class="btn btn-green button_query" style="background-color:#C0C0C0">Search
+          </button>
+        </div>
+      </form>
+      </div>
+    	<hr>
+      {# error message #}
+      {% if err_msg %}
+      <span>{{ err_msg }}</span>
+      {% endif %}
+      {# SVG #}
+      {% if aa %}
+      {% if is_sample %}
+      {# sample svg #}
+      <div class="row">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <font style="size:120%; font-weight:bold; color:black;">Variants for {{ snv.tumor_sampleid | default:"CRC100_T1" }}</font>
+          </div>
+            <div class="panel-body">
+              <table>
+                <tr>
+                  <td><div id="sample-genes-svgcontainer"></div></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+        <!--
+        <div class="col-sm-1"></div>
+        <table>
+          <tr>
+            <td><div id="sample-genes-svgcontainer"></div></td>
+          </tr>
+        </table> -->
+      </div>
+      {% else %}
+      {# gene svg #}
+    	<div class="row">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <font style="size:120%; font-weight:bold; color:black;">Amino Acid Changes for {{ aa.gene }}</font>
+          </div>
+            <div class="panel-body">
+              <table>
+          <tr>
+            <td><div id="gene-svgcontainer"></div></td>
+            <td>
+              <table>
+                <tr><td><font style="font-size:130%;font-weight:500;">{{ aa.gene }}</font></td></tr>
+                <tr><td><font> Refseq ID:&nbsp;</font> <font>{{ aa.refseqid }}</font></tr>
+                <tr><td><font> Protein ID:&nbsp;</font> <font>{{ aa.proteinid }}</font></tr>
+                <tr><td><font> Somatic Mutation Frequency: &nbsp;</font><font>1.46%</font></td></tr>
+              </table>
+            </td>
+          </tr>
+               </table>
+            </div>
+        </div>
+        <!--
+        <table>
+          <tr>
+            <td><div id="gene-svgcontainer"></div></td>
+            <td>
+              <table>
+                <tr><td><font style="font-size:130%;font-weight:500;">{{ aa.gene }}</font></td></tr>
+                <tr><td><font> Refseq ID:&nbsp;</font> <font>{{ aa.refseqid }}</font></tr>
+                <tr><td><font> Protein ID:&nbsp;</font> <font>{{ aa.proteinid }}</font></tr>
+                <tr><td><font> Somatic Mutation Frequency: &nbsp;</font><font>1.46%</font></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table> -->
+      </div>
+      {% endif %}
+    	<hr>
+      {% endif %}
+      {# table content #}
+      {% if snvs %}
+      <div class="row">
+        <div class="col-xs-12 col-md-12">
+          <table id="snv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+              <tr style="background-color: #eee">
+                <th>Hugo_Symbol</th>
+                <th>Entrez_Gene_Id</th>
+                <th>Tumor_Sample_Barcode</th>
+                <th>AAchange</th>
+                <th>Variant_Type</th>
+                <th>Chromosome</th>
+                <th>Start_position</th>
+                <th>End_Position</th>
+                <th>Reference_Allele</th>
+                <th>Tumor_Seq_Allele2</th>
+                <th>Variant_Classification</th>
+                <th>dbSNP_RS</th>
+                <th>cytoBand</th>
+                <th>cosmic86</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for snv in snvs %}
+              <tr>
+                <td>{{ snv.symbol }}</td>
+                <td>{{ snv.gene_id }}</td>
+                <td>{{ snv.tumor_sampleid }}</td>
+                <td>{{ snv.aachange|truncatechars:64 }}</td>
+                <td>{{ snv.vari_type }}</td>
+                <td>{{ snv.chromos }}</td>
+                <td>{{ snv.spo }}</td>
+                <td>{{ snv.epo }}</td>
+                <td>{{ snv.ref }}</td>
+                <td>{{ snv.tum2 }}</td>
+                <td>{{ snv.vari_classification }}</td>
+                <td>{{ snv.dbsnp }}</td>
+                <td>{{ snv.cytoband }}</td>
+                <td>{{ snv.cosmic86 }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <br>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if aa %}
+<script>
+{% if is_sample %}
+{# sample svg #}
+var x_list = [0, 600];
+var assign_width = 800;
+var assign_height = 300;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+
+var svg = d3.select("#sample-genes-svgcontainer")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+
+var xAxisWidth = width - padding.right - padding.left;
+var xScale = d3.scale.linear()
+               .domain([0, d3.max(x_list)])
+               .range([0, xAxisWidth]);
+var tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0.0);
+
+svg.append("rect")
+   .attr("fill","white")
+   .attr("stroke-width","1")
+   .attr("stroke","#D3D3D3")
+   .attr("x",1)
+   .attr("y",1)
+   .attr("width",width-28)
+   .attr("height",height-2);
+
+xScale.range([0,xAxisWidth]);
+var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(5);
+svg.append("g")
+   .attr("class","axis")
+   .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
+   .call(xAxis)
+   .selectAll("text");
+{% else %}
+{# gene svg #}
+var x_list = [0, {{ aa.length }}];
+var assign_width = 700;
+var assign_height = 160;
+var padding = {top: 0, right: 60, bottom: 30, left: 13};
+var width = assign_width;
+var height = assign_height;
+
+var svg = d3.select("#gene-svgcontainer")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+
+var xAxisWidth = width - padding.right - padding.left;
+var xScale = d3.scale.linear()
+               .domain([0,d3.max(x_list)])
+               .range([0,xAxisWidth]);
+var tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0.0);
+
+svg.append("rect")
+   .attr("fill","white")
+   .attr("stroke-width","1")
+   .attr("stroke","#D3D3D3")
+   .attr("x",1)
+   .attr("y",1)
+   .attr("width",width-28)
+   .attr("height",height-2);
+
+xScale.range([0,xAxisWidth]);
+var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(5);
+svg.append("g")
+   .attr("class","axis")
+   .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
+   .call(xAxis)
+   .selectAll("text");
+{# total length #}
+svg.append("rect")
+   .attr("fill","#cccccc")
+   .attr("stroke-width","0")
+   .attr("x",padding.left)
+   .attr("y",height - padding.bottom - 33)
+   .attr("width",xScale({{ aa.length }}))
+   .attr("height",20);
+{# domains length #}
+{% for domain in aa.domains %}
+svg.append("rect")
+   .attr("fill","#2dcf00")
+   .attr("stroke-width","0")
+   .attr("x",padding.left+xScale({{ domain.0 }}))
+   .attr("y",height - padding.bottom - 39)
+   .attr("width",xScale({{ domain.1 }} - {{ domain.0 }}))
+   .attr("height",32);
+
+svg.append("text")
+   .attr("fill","white")
+   .attr("font-size","10px")
+   .attr("text-anchor","middle")
+   .attr("x",padding.left+xScale({{ domain.0 }} + ({{ domain.1 }} - {{ domain.0 }}) / 2))
+   .attr("y",height - padding.bottom - 18)
+   .text('{{ domain.2 }}')
+{% endfor %}
+
+{# aachange #}
+{% for changes in aa.changes %}
+single_length = 20.00;
+single_position = {{ changes.0 }};
+single_color = "#228B22";
+svg.append("line")
+   .attr("stroke","gray")
+   .attr("stroke-width","1.3")
+   .attr("x1",padding.left+xScale(single_position))
+   .attr("y1",height - padding.bottom - 39)
+   .attr("x2",padding.left+xScale(single_position))
+   .attr("y2",height - padding.bottom - 39-single_length);
+svg.append("circle")
+   .attr("cx",padding.left+xScale(single_position))
+   .attr("cy",height - padding.bottom - 39-single_length)
+   .attr("r","3")
+   .style("fill",single_color)
+   .style("cursor","pointer")
+   .on("mouseover",function(){
+       d3.select(this)
+         .attr("r","5")
+   })
+   .on("mousemove",function(){
+       d3.select(this)
+         .attr("r","5")
+   })
+   .on("mouseout",function(){
+       d3.select(this)
+         .transition()
+         .duration(500)
+         .attr("r","3")
+   })
+   .on("click",function(){
+       $('#global_filter').val('{{ changes.1 }}').get(0).focus();
+       $("#global_filter").trigger("click");
+   });
+{% endfor %}
+{% endif %}
+</script>
+{% endif %}
+{% endblock %}
