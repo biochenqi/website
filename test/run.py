@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from flask_paginate import Pagination, get_page_parameter
@@ -9,6 +9,7 @@ import pandas as pd
 from math import ceil
 from flask_babel import Babel
 from functools import reduce
+import ast
 
 app = Flask(__name__)
 app.debug=True
@@ -166,7 +167,7 @@ def browse():
     return render_template('browse.html', classes=classes,data=df_browser.to_dict(orient='records'))  # 渲染模板，传递数据
 
 def demo_deal(file,sheet):
-    df = pd.read_excel('bin/demo.xlsx',sheet_name=sheet,skiprows=2)
+    df = pd.read_excel(file,sheet_name=sheet,skiprows=2)
     list_cols = [i for i in df.columns if 'Unnamed:' not in i]
     list_cols_sta= df.iloc[0,:].values[4:]
     return df.iloc[1:,:],list_cols,list_cols_sta
@@ -243,6 +244,107 @@ def test_pic():
     reverse_names = json.dumps(['SCZ', 'AN', 'BD', 'ASD', 'OCD', 'TS', 'MDD', 'PTSD', 'ADHD', 'ANX']),
     reverse_vals = json.dumps([95, 100, 44, 92, 24, 33, 59, 35, 52, 23]))
 
+#用于生成结果情况
+@app.route('/result_info')
+def result_info():
+    mr_ana_class = request.args.get('mr_ana_class')
+    disease = request.args.get('disease')
+    idp = request.args.get('idp')
+    print(mr_ana_class,disease,idp)
+    if mr_ana_class=="Reverse":
+        df_Reverse,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面2')
+        # df = df_Reverse.loc[:,['IDP ID','Exposurer (Disorder)','Outcome (IDP)','IVs N']]
+        df = df_Reverse.loc[:,['IDP ID','Exposurer (Disorder)','Outcome (IDP)']]
+        disease_name = 'Exposurer (Disorder)'
+    elif mr_ana_class=="Forward":
+        df_Forward,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面')
+        df = df_Forward.loc[:,['IDP ID','Outcome (Disorder)','Exposure (IDP)']]
+        disease_name = 'Outcome (Disorder)'
+    df = df if not disease or disease=='All' else df[df[disease_name]==disease]
+    return render_template('result_info.html',
+    data = df.to_dict(orient='records'))
+
+#用来生成搜索页面
+@app.route('/MR_ana_new',methods=['GET', 'POST'])
+def MR_ana_new():
+    text='all'
+    IDP, Disease, mr_ana_class = "", "", ""
+    action = request.form.get('action')
+    if request.method == 'POST':
+        IDP = request.form.get('IDP')
+        # IDP = IDP if IDP!='all' else ""
+        Disease = request.form.get('Disease')
+        mr_ana_class = request.form.get('mr_ana_class')
+        return redirect(url_for('result_info', mr_ana_class=mr_ana_class, disease=Disease, idp=IDP))
+    elif request.method == 'GET':
+        # text = request.args.get('text', default='all', type=str)
+        pass
+    if action=='reset':
+        IDP, Disease, mr_ana_class = "", "", ""
+    print('###################')
+    print(IDP, Disease, mr_ana_class)
+    print('##################')
+
+    #用来提取数据信息
+    if mr_ana_class=="Reverse":
+        df,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面2')
+        df = df[df.iloc[:,1] == IDP] if IDP else df
+        df = df[df.iloc[:,0] == Disease] if Disease else df
+        idp = df.iloc[:,1].unique().tolist()
+        disease = df.iloc[:,0].unique().tolist()
+    else:
+        df,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面')
+        df = df[df.iloc[:,0] == IDP] if IDP else df
+        df = df[df.iloc[:,2] == Disease] if Disease else df
+        idp = df.iloc[:,0].unique().tolist()
+        disease = df.iloc[:,2].unique().tolist()
+
+    return render_template('MR_ana_new.html', 
+    heads=list_cols, #第一行头
+    heads_ana = list_cols_sta , #第二行头
+    list_idp = idp , #idp选择
+    list_disease = disease, #disease选择
+    idp_fir = IDP, #设定IDP第一个选项
+    disease_fir = Disease, #设定disease的第一个选项
+    mr_ana_fir = mr_ana_class, #设定mr_ana的第一个选项
+    data=df.to_dict(orient='records'))  # 渲染模板，传递数据
+
+def result_deal(df_Reverse,list_cols,arg):
+    for key,value in arg.items():
+        if key == "IDP ID":
+            df_Reverse = df_Reverse[df_Reverse[key]==value]
+        elif 'Disorder' in key:
+            order = [col for col in df_Reverse.columns if 'Disorder' in col]
+            df_Reverse = df_Reverse[df_Reverse[order[0]]==value]
+
+    values = list(df_Reverse.values[0][4:])
+    list_result,count = [],0
+    for i in list_cols[4:]:
+        a = values[count:count+4]
+        a.insert(0,i)
+        list_result.append(a)
+        count += 4
+    return list_result,int(df_Reverse.values[0][3])
+
+#用于生成最终的结果信息
+@app.route('/result')
+def result():
+    arg = request.args.get('arg')
+    print(arg)
+    arg = ast.literal_eval(arg)
+    df_Reverse,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面2')
+    list_Reverse,re_n = result_deal(df_Reverse,list_cols,arg)
+    df,list_cols,list_cols_sta = demo_deal('bin/demo.xlsx','HOME页面')
+    list_Forward,fo_n = result_deal(df,list_cols,arg)
+    out = list(arg.values())
+    out.insert(2,fo_n)
+    out.insert(3,re_n)
+    print(out)
+    return render_template('result.html',
+    Reverse = list_Reverse,
+    Forward = list_Forward,
+    # info = out[:-1])
+    info = out[:5])
 
 ##用于展示
 @app.route('/home')
@@ -250,11 +352,11 @@ def home():
     # return render_template('work_test.html')
     return "hello world"
 
-# @app.route('/home')
-# def home():
-#     df = pd.read_table('bin/stats.xls')
-#     # json_records = df.to_json(orient ='records')
-#     return render_template('home.html',disease=df['Disease'].to_list(),ldsc=df['LDSC'].to_list())
+@app.route('/testsss')
+def homes():
+    df = pd.read_table('bin/stats.xls')
+    # json_records = df.to_json(orient ='records')
+    return render_template('home.html',disease=df['Disease'].to_list(),ldsc=df['LDSC'].to_list())
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=5000)

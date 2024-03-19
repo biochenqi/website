@@ -101,7 +101,7 @@ div.dataTables_wrapper {
 <script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
 {% endblock %}
 
-{% block  MR_ana %}active{% endblock %}
+<!-- {% block  MR_ana %}active{% endblock %} -->
 {% block content %}
 <div class="container">
     {# table content #}
@@ -161,39 +161,6 @@ div.dataTables_wrapper {
                 </div>
                 <!-- 多条件搜索 end -->
                 <hr />
-                <!-- datatables start -->
-                <div class="row">
-                    <div class="col-xs-12 col-md-12">
-                        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    {% for key in heads[:4] %}
-                                    <th rowspan="2" style="text-align: center; vertical-align: middle;">{{ key }}</th>
-                                    {% endfor %}
-                                    {% for key in heads[4:] %}
-                                    <th colspan="4" style="text-align:center">{{ key }}</th>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for key in heads_ana %}
-                                    <th>{{ key }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in data %}
-                                <tr>
-                                    {% for value in row.values() %}
-                                        <td>{{ value }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <br>
-                    </div>
-                </div>
-                <!-- datatables end -->
               <!-- </div> -->
             <!-- </div> -->
             <br />

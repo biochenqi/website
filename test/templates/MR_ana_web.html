@@ -1,0 +1,213 @@
+{% extends "base_web.html" %}
+
+
+{% block extrastyle %}
+<script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}"/>
+<style type="text/css">
+div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+    .control-label {
+        font-size: 12px;
+    }
+    .selected {
+        background-color: #DFF0D8;
+    }
+    #topPlugin {
+        float: left;
+        margin-left: 0%;
+    }
+    div.dataTables_paginate {
+        margin: 0;
+        white-space: nowrap;
+        text-align: right;
+        margin-top: 5px;
+    }
+    .table th, .table td { 
+        text-align: center; 
+        height:25px;
+    }
+    .table > tbody > tr > td {
+        text-align:  center;
+    }
+    .table > thead:first-child > tr:first-child > th {
+        text-align: center;
+    }
+    div.dataTables_wrapper {
+        /* width: 1900px; */
+        /* margin: 0 auto; */
+    }
+    .wrapper{
+        background: #FFF8DC;
+    }
+    .top{
+        background: #E6E6FA;
+    }
+    .bottom{
+        background: #ADD8E6;
+    }
+    .clear{
+        background: green;
+    }
+    /* 设置Button之间的距离 */
+    .button-spacing {
+    margin-right: 10px;  
+    }
+    .row + .row {
+        margin-top: 20px; /* 这会在每个跟在另一个.row元素后面的.row元素的顶部添加20px的边距 */
+    }
+    thead,tbody {
+    white-space: nowrap;
+    min-width: 150px;
+    }
+    /* 设置搜索框的背景图片 */
+    /* .form-horizontal {
+    background: url(/static/cccga/the_ck_proj.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+} */
+    .form-horizontal{
+    background-image: url(/static/cccga/the_ck_proj.jpg);
+    background-repeat: no-repeat;
+    background-size: cover; /* Resize the background image to cover the entire container */
+    width: 1140px;
+    height: 395px;
+    padding-top: 100px;
+}
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}" charset="utf-8"></script>
+
+<script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#mr_ana_class').change(function() {
+            var diseases = JSON.parse('{{ data1 | safe }}');
+            var selected_class = $(this).val();
+            var options = '';
+            for (var i = 0; i < diseases[selected_class].length; i++) {
+                options += '<option value="' + diseases[selected_class][i] + '">&nbsp;&nbsp;' + diseases[selected_class][i] + '</option>';
+            }
+            $('#Disease').html(options);
+            
+        });
+    });
+</script>
+{% endblock %}
+
+{% block  MR_ana %}active{% endblock %}
+{% block content %}
+<div class="container">
+    {# table content #}
+    <br>
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <!-- <div class="panel panel-info"> -->
+              <!-- <div class="panel-body"> -->
+                <!-- 多条件搜索 start -->
+                <div class="form-horizontal" id="filter-container">
+                  <div class="form-group">
+                    <form method="POST">
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <label class="col-sm-2 control-label" style="color: white;">{% trans %}MR analysis results:{% endtrans %}</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" style="width: 100%" name="mr_ana_class" id="mr_ana_class">
+                                <option value="neurological disoders">&nbsp;&nbsp;neurological disoders</option>
+                                <option value="neuro-oncological disoders">&nbsp;&nbsp;neuro-oncological disoders</option>
+                                <option value="psychiatric disoders">&nbsp;&nbsp;psychiatric disoders</option>
+                            </select>
+                        </div>
+                      <label class="col-sm-2 control-label" style="color: white;">{% trans %}Disease{% endtrans %}:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" name="Disease" id="Disease">
+                            {% for i in list_dis %}
+                            <option value="{{ i }}">&nbsp;&nbsp;{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <label class="col-sm-2 control-label" style="color: white;">{% trans %}IDP Subtype{% endtrans %}:</label>
+                      <div class="col-sm-3">
+                        <select class="form-control" style="width: 100%" name="Subtype" id="Subtype">
+                            {% for i in list_idp %}
+                            <option value="{{ i }}">&nbsp;&nbsp;{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <!-- <input class="form-control" style="width: 100%" name="IDP" id="IDP" list="options" value="{{ idp_fir }}" autocomplete="off" >s -->
+                      </div>
+                      <label class="col-sm-2 control-label" style="color: white;">{% trans %}Type{% endtrans %}:</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" style="width: 100%" name="types" id="types">
+                            <option value="Forward">&nbsp;&nbsp;Forward</option>
+                            <option value="Reverse">&nbsp;&nbsp;Reverse</option>
+                        </select>
+                      </div>
+                      
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <label class="col-sm-2 control-label" style="color: white;">{% trans %}IDP.ID{% endtrans %}:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" style="width: 100%" name="IDP" id="IDP" list="options" value="{{ idp_fir }}" autocomplete="off" placeholder="1636">
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="font-size:15px;color:#FFFFFF;font-family: 'Open Sans', sans-serif">Examples: hipp, hippocampus, or 0018 (ID list of IDP refer to the browse or help page),or click <a href="{{ url_for('MRlist') }}">here</a></p>
+                        </div>
+                        <!-- <div class="col-sm-3 ml-auto">
+                            <button id="search"  type="submit" name="action" value="search" class="btn btn-success button-spacing" >{% trans %}Search{% endtrans %}</button>
+                            <button id="reset"  type="submit" name="action" value="reset" class="btn btn-primary search" >{% trans %}Reset{% endtrans %}</button>
+                        </div> -->
+                    </div>
+                    
+                </form>
+                  </div>
+                </div>
+                <!-- 多条件搜索 end -->
+                <hr />
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="col-xs-12">
+                            <div id='pathological-stage-samples' style="width: 100%; height: 400px">
+                              <canvas id="myChart" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                            <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+                            <script>
+                                var data = {{ list_bar | safe }};
+                                // var myChart = echarts.init(document.getElementById('pathological-stage-samples'));
+                                var source = [['疾病',  'LDSC'  ,  '正向MR',  '反向MR']].concat(data);
+                                option = {
+                                    legend: {},
+                                    tooltip: {},
+                                    dataset: {
+                                        source: source
+                                    },
+                                    xAxis: { type: 'category' ,
+                                    axisLabel: {
+                                            interval: 0, // 强制显示所有标签
+                                            rotate: 45, // 标签倾斜45度
+                                            fontSize: 10 // 设置标签字体大小为10
+                                        }},
+                                    yAxis: {},
+                                    // Declare several bar series, each will be mapped
+                                    // to a column of dataset.source by default.
+                                    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+                                    };
+                                    myChart.setOption(option);
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -16,7 +16,7 @@
     ================================================== -->
     <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='cccga/base.css') }}" rel="stylesheet">
     <style type="text/css">
@@ -38,7 +38,7 @@
       .navbar {
         min-height: 30px;
         margin-bottom: 10px;
-        background-color: #053df7; /*#3aa5c8;#3433e3;#053df7;*/
+        background-color: #043967; /*#3aa5c8;#3433e3;#053df7;*/
         /*border-color: #3433e3;*/
         border-style: none;
         border-radius: 0px 0px 4px 4px;
@@ -50,10 +50,10 @@
       .navbar-default .navbar-nav > li > a {
         color: #fff;
         margin-right: 20px;
-        background-color: #053df7; /*#3aa5c8;#3433e3;*/
+        background-color: #043967; /*#3aa5c8;#3433e3;*/
       }
       .navbar-header {
-        background-color: #053df7; /*#3aa5c8;#3433e3;*/
+        background-color: #043967; /*#3aa5c8;#3433e3;*/
         min-height: 30px;
       }
       .navbar-toggle {
@@ -110,15 +110,8 @@
             <li class="{% block index_active %}{% endblock %}">
               <a href="{{ url_for('home') }}"><span class="glyphicon glyphicon-home"></span> <b> {% trans %}Home{% endtrans %}</b></a>
           </li>
-              <!-- <a href="{{ url_for('analysis_workflow') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Analysis Workflow{% endtrans %}</b></a> -->
-          <!-- <li class="{% block workflow_active %}{% endblock %}">
-              <a href="{{ url_for('test') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Analysis Workflow{% endtrans %}</b></a>
-          </li> -->
           <li class="{% block MR_ana %}{% endblock %}">
             <a href="{{ url_for('MR_ana') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}MR analysis{% endtrans %}</b></a>
-        </li>
-          <li class="{% block Browse %}{% endblock %}">
-            <a href="{{ url_for('browse') }}"><span class="glyphicon glyphicon-tasks"></span><b> {% trans %}Browse{% endtrans %}</b></a>
         </li>
           </ul>
         </div>

@@ -1,0 +1,109 @@
+{% extends "base_web.html" %}
+
+{% block extrastyle %}
+<style>
+    h2 {
+      font-weight: bold;
+    }
+    th {
+      background-color: rgba(161, 199, 241, 0.658);
+      color: black;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    td {
+      font-size: 18px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+{# table content #}
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+                <tr>
+                    <th width='10%'>IDP ID</th>
+                    <th width='10%'>Disorder</th>
+                    <th width='15%'>Forward IVs N</th>
+                    <th width='15%'>Reverse IVs N</th>
+                    <th width='50%'>IDP name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for value in info['meta'] %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+        <br><p style="font-size:15px; font-weight:bold;">GC result</p>
+        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+                <tr>
+                    <th width='20%'>IDP ID</th>
+                    <th width='20%'>GC rg</th>
+                    <th width='20%'>GC SE</th>
+                    <th width='20%'>GC Z</th>
+                    <th width='20%'>GC P</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for i in info['GC'] %}
+                        <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+        <br><p style="font-size:15px; font-weight:bold;">Forward MR Result</p>
+        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+                <tr>
+                    <th width='20%'>Methods</th>
+                    <th width='20%'>Beta</th>
+                    <th width='20%'>P-value</th>
+                    <th width='20%'>OR</th>
+                    <th width='10%'>95% lowerCI</th>
+                    <th width='10%'>95% upperCI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for value in info['Forward'] %}
+                <tr>
+                    {% for i in value %}
+                        <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br><p style="font-size:15px; font-weight:bold;">Reverse MR Result</p>
+        <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+                <tr>
+                    <th width='25%'>Methods</th>
+                    <th width='15%'>Beta</th>
+                    <th width='15%'>P-value</th>
+                    <th width='15%'>OR</th>
+                    <th width='15%'>95% lowerCI</th>
+                    <th width='15%'>95% upperCI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for value in info['Reverse'] %}
+                <tr>
+                    {% for i in value %}
+                        <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block extrastyle %}
+<style>
+    h2 {
+      font-weight: bold;
+    }
+    th {
+      background-color: rgba(161, 199, 241, 0.658);
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    td {
+      font-size: 18px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {# table content #}
+        <div class="col-xs-12 col-md-12">
+            <table id="cnv" class="table table-bordered table-hover display" style="width:100%">
+            <thead>
+                <tr>
+                    <th width='20%'>IDP ID</th>
+                    <th width='20%'>Disorder</th>
+                    <th width='50%'>IDP full description</th>
+                    <!-- <th width='30%'>IVs N</th> -->
+                    <th width=10%>Results</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                        <td>
+                            <!-- <a href="{{ url_for('result',arg =row) }}">click here</a> -->
+                            <a href="">click here</a>
+                        </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+</div>
+{% endblock %}
